@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Modal Project</title>
+	<link rel="stylesheet" href="styles.css">
+	<style>
+		#modal.open {
+			display: block;
+		}
+
+		#overlay.open {
+			display: block;
+		}
+
+	</style>
+	<!-- DONE: 1. Link the script with a script tag. -->
+	<script defer src="script.js"></script>
+</head>
+<body>
+	<button id="open-modal-btn">Open Modal</button>
+
+	<div id="overlay"></div>
+
+	<div id="modal">
+		<h3>This is a modal</h3>
+		<button id="close-modal-btn">Close Modal</button>
+	</div>
+</body>
+</html>
