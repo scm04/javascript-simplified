@@ -1,0 +1,20 @@
+{
+	"name": "my-solution",
+	"version": "1.0.0",
+	"description": "My solution to the Date Picker project",
+	"source": "index.html",
+	"scripts": {
+		"start": "parcel",
+		"build": "parcel build --public-url ./",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"date-fns": "^2.28.0"
+	},
+	"devDependencies": {
+		"parcel": "^2.2.1"
+	}
+}
