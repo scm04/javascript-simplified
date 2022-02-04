@@ -7,3 +7,5 @@ The home for all my code for the JavaScript Simplified course (found [here](http
 -   [Simple form validation](/Section%207%20-%20Control%20Flow/56-and-57-form-validation-project/) (lessons 56 and 57 in the Control Flow section (Section 7))
 -   [Simple Expand/Collapse Mechanism](/Section%209%20-%20Advanced%20DOM/66-and-67-expand-collapse-project/) (lessons 66 and 67 in the Advanced DOM section (Section 9))
 -   [Simple Google Maps Clone using MapBox](/Section%209%20-%20Advanced%20DOM/68-google-maps-clone/) (lesson 68 in the Advanced DOM section (Section 9))
+-   [Custom Date Picker](/Section%2010%20-%20Modules%20and%20Bundlers/73-date-picker/my-solution) (lesson 73 in the Modules and Bundlers section (Section 10))
+-   [Shopping Cart](/Section%2010%20-%20Modules%20and%20Bundlers/74-shopping-cart/my-solution) (lesson 74 in the Modules and Bundlers section (Section 10))

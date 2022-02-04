@@ -1,0 +1,16 @@
+{
+	"name": "my-solution",
+	"version": "1.0.0",
+	"description": "",
+	"source": "index.html",
+	"scripts": {
+		"start": "parcel",
+		"build": "parcel build --public-url ./"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"parcel": "^2.2.1"
+	}
+}
