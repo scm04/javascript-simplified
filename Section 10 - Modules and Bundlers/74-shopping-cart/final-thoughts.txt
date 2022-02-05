@@ -1,0 +1,9 @@
+- Kyle separated his shopping cart script from his store script, which allowed him to import only what was necessary on the Home and Team pages. This is a much smarter idea than my approach, which just checked whether the item list element existed or not before running the code to populate the store page.
+- Kyle chose to use Session Storage instead of Local Storage for persisting the data, and after hearing his reasoning, I agree. It makes more sense for the items to be removed from your cart when you end your session than for them to remain there the next time you open the browser. That said, there are some cases where I personally would want it to stay, but those use cases could be solved by other features (like bookmarks or favorites lists).
+- My solution honestly ended up being functionally quite similar to Kyle's, but his was organized much better and I learned some new things from watching him complete it (like the fact that you can format currency using the built in Intl object now!). I also noticed that I did things in an order that didn't really make sense, where Kyle was very methodical in how he chose what to work on next, and I think that's a lot of the reason that it felt like it took me a long time to finish the project because the order he in which he did things made the whole project much easier to reason about.
+
+Takeaways:
+- Split things into modules where it makes sense to have a separation of concerns.
+- Think carefully about which step to tackle next when working through a project. A few things to think about during this process:
+	- Try to choose something that only depends on the things that are already complete.
+	- If multiple things meet the first requirement, choose the task you would prefer to do next.
