@@ -1,0 +1,16 @@
+{
+	"name": "1-tooltip-library",
+	"version": "1.0.0",
+	"description": "",
+	"main": "script.js",
+	"scripts": {
+		"start": "parcel index.html",
+		"build": "parcel build index.html"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"parcel": "^2.2.1"
+	}
+}
