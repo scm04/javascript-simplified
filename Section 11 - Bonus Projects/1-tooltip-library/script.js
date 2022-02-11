@@ -5,20 +5,32 @@ document.addEventListener("keydown", e => {
 
 	switch (e.key) {
 		case "ArrowLeft":
-			container.classList.replace("x-center", "x-left")
-			container.classList.replace("x-right", "x-center")
+			if (container.classList.contains("x-right")) {
+				container.classList.remove("x-right")
+			} else {
+				container.classList.add("x-left")
+			}
 			break
 		case "ArrowRight":
-			container.classList.replace("x-center", "x-right")
-			container.classList.replace("x-left", "x-center")
+			if (container.classList.contains("x-left")) {
+				container.classList.remove("x-left")
+			} else {
+				container.classList.add("x-right")
+			}
 			break
 		case "ArrowUp":
-			container.classList.replace("y-center", "y-top")
-			container.classList.replace("y-bottom", "y-center")
+			if (container.classList.contains("y-bottom")) {
+				container.classList.remove("y-bottom")
+			} else {
+				container.classList.add("y-top")
+			}
 			break
 		case "ArrowDown":
-			container.classList.replace("y-center", "y-bottom")
-			container.classList.replace("y-top", "y-center")
+			if (container.classList.contains("y-top")) {
+				container.classList.remove("y-top")
+			} else {
+				container.classList.add("y-bottom")
+			}
 			break
 	}
 })

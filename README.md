@@ -9,3 +9,4 @@ The home for all my code for the JavaScript Simplified course (found [here](http
 -   [Simple Google Maps Clone using MapBox](/Section%209%20-%20Advanced%20DOM/68-google-maps-clone/) (lesson 68 in the Advanced DOM section (Section 9))
 -   [Custom Date Picker](/Section%2010%20-%20Modules%20and%20Bundlers/73-date-picker/my-solution) (lesson 73 in the Modules and Bundlers section (Section 10))
 -   [Shopping Cart](/Section%2010%20-%20Modules%20and%20Bundlers/74-shopping-cart/my-solution) (lesson 74 in the Modules and Bundlers section (Section 10))
+-   [Tooltip Library](/Section%2011%20-%20Bonus%20Projects/1-tooltip-library) (the first bonus project for the beginner course (Section 11))

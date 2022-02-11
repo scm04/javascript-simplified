@@ -22,22 +22,12 @@ body {
 	justify-content: flex-end;
 }
 
-/* I'm not sure we need this since this is the default behavior of .container; it depends on whether or not removing the x-left or x-right class resets the value to the .container value. */
-.container.x-center {
-	justify-content: center;
-}
-
 .container.y-top {
 	align-items: flex-start;
 }
 
 .container.y-bottom {
 	align-items: flex-end;
-}
-
-/* I'm not sure we need this since this is the default behavior of .container; it depends on whether or not removing the y-top or y-bottom class resets the value to the .container value. */
-.container.y-center {
-	align-items: center;
 }
 
 .help-text {
@@ -61,4 +51,59 @@ body {
 	border-radius: 0.25rem;
 	font-size: 0.75rem;
 	max-width: 200px;
+	/* initial values for the variables used to position the arrow */
+	--arrow-translate-x: -50%;
+	--arrow-translate-y: 0%;
+	--arrow-border-size: 10px;
+	--arrow-border-top-color: inherit;
+	--arrow-border-left-color: transparent;
+	--arrow-border-right-color: transparent;
+	--arrow-border-bottom-color: transparent;
+	--arrow-body-top-color: white;
+	--arrow-body-left-color: transparent;
+	--arrow-body-right-color: transparent;
+	--arrow-body-bottom-color: transparent;
+	--arrow-top: 100%;
+	--arrow-left: 50%;
+	--arrow-right: 0%;
+	--arrow-bottom: 0%;
+}
+
+.tooltip::before {
+	content: "";
+	display: block;
+	position: absolute;
+	width: 0;
+	height: 0;
+	/* the following properties are controlled by variables */
+	transform: translateX(var(--arrow-translate-x)) translateY(var(--arrow-translate-y));
+	border: var(--arrow-border-size) solid;
+	border-top-color: var(--arrow-border-top-color);
+	border-left-color: var(--arrow-border-left-color);
+	border-right-color: var(--arrow-border-right-color);
+	border-bottom-color: var(--arrow-border-bottom-color);
+	top: var(--arrow-top);
+	left: var(--arrow-left);
+	right: calc(var(--arrow-right) - (var(--arrow-border-size) * 2));
+	bottom: var(--arrow-bottom);
+}
+
+.tooltip::after {
+	content: "";
+	display: block;
+	position: absolute;
+	width: 0;
+	height: 0;
+	/* the following properties are controlled by variables */
+	transform: translateX(calc(var(--arrow-translate-x) - 1px))
+		translateY(var(--arrow-translate-y));
+	border: calc(var(--arrow-border-size) - 1px) solid;
+	border-top-color: var(--arrow-body-top-color);
+	border-left-color: var(--arrow-body-left-color);
+	border-right-color: var(--arrow-body-right-color);
+	border-bottom-color: var(--arrow-body-bottom-color);
+	top: var(--arrow-top);
+	left: calc(var(--arrow-left) + 1px);
+	right: calc(var(--arrow-right) - (var(--arrow-border-size) * 2));
+	bottom: var(--arrow-bottom);
 }
