@@ -10,3 +10,4 @@ The home for all my code for the JavaScript Simplified course (found [here](http
 -   [Custom Date Picker](/Section%2010%20-%20Modules%20and%20Bundlers/73-date-picker/my-solution) (lesson 73 in the Modules and Bundlers section (Section 10))
 -   [Shopping Cart](/Section%2010%20-%20Modules%20and%20Bundlers/74-shopping-cart/my-solution) (lesson 74 in the Modules and Bundlers section (Section 10))
 -   [Tooltip Library](/Section%2011%20-%20Bonus%20Projects/1-tooltip-library) (the first bonus project for the beginner course (Section 11))
+-   [Trello Clone](/Section%2011%20-%20Bonus%20Projects/2-trello-clone) (the second bonus project for the beginner course (Section 11))

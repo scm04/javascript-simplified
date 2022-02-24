@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Trello Clone</title>
+	<link rel="stylesheet" href="styles.css">
+	<script src="script.js" type="module"></script>
+</head>
+<body>
+	<nav class="flex">
+		<form id="new-lane-form" class="flex flex-grow-1">
+			<input id="new-lane-input" type="text" class="new-lane-input flex-grow-1" placeholder="New Lane Name" />
+		</form>
+		<button class="icon-button" data-upload-button data-tooltip="Upload Tasks">
+			<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24"
+				width="24px" fill="currentColor">
+				<g>
+					<rect fill="none" height="24" width="24" />
+				</g>
+				<g>
+					<path d="M5,20h14v-2H5V20z M5,10h4v6h6v-6h4l-7-7L5,10z" />
+				</g>
+			</svg>
+		</button>
+		<button class="icon-button" data-download-button data-tooltip="Download Tasks">
+			<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24"
+				width="24px" fill="currentColor">
+				<g>
+					<rect fill="none" height="24" width="24" />
+				</g>
+				<g>
+					<path d="M5,20h14v-2H5V20z M19,9h-4V3H9v6H5l7,7L19,9z" />
+				</g>
+			</svg>
+		</button>
+	</nav>
+	<div class="lanes" data-lanes-container></div>
+	<div class="hide popup-overlay" id="popup-overlay"></div>
+	<div class="hide popup flex flex-direction-column" id="upload-popup">
+		<h3>Upload Tasks</h3>
+		<textarea id="upload-textarea" class="flex-grow-1 no-resize"
+			placeholder="Drop file or paste JSON data here..."></textarea>
+		<input id="upload-file-selector" class="display-none" type="file" />
+		<div class="flex justify-content-end">
+			<button id="upload-json-button" class="popup-button" data-tooltip="Upload a JSON file">
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"
+					fill="currentColor">
+					<path d="M0 0h24v24H0V0z" fill="none" />
+					<path
+						d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11z" />
+				</svg>
+			</button>
+			<button id="save-tasks-button" class="popup-button" data-tooltip="Save Tasks">
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"
+					fill="currentColor">
+					<path d="M0 0h24v24H0z" fill="none" />
+					<path
+						d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
+				</svg>
+			</button>
+		</div>
+	</div>
+	<div class="hide popup flex flex-direction-column" id="download-popup">
+		<h2>Download Tasks</h2>
+		<textarea id="download-textarea" readonly disabled class="flex-grow-1 no-resize"></textarea>
+		<div class="flex justify-content-end">
+			<button id="download-json-button" class="popup-button" data-tooltip="Download as JSON file">
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"
+					fill="currentColor">
+					<path d="M0 0h24v24H0V0z" fill="none" />
+					<path
+						d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z m4 18H6V4h7v5h5v 11z M16 15.05131l-1.41 -1.41l-1.59 1.58l0 -4.16l-2 0l0 4.16l-1.59 -1.59l-1.41 1.42l3.99 4.01l4.01 -4.01z" />
+				</svg>
+			</button>
+			<button id="copy-button" class="popup-button" data-tooltip="Copy to Clipboard">
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"
+					fill="currentColor">
+					<path d="M0 0h24v24H0z" fill="none" />
+					<path
+						d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+				</svg>
+			</button>
+		</div>
+	</div>
+	<!-- Templates -->
+	<template data-lane-template>
+		<div class="lane">
+			<div class="header flex flex-row align-items-center">
+				<div class="flex-grow-1" data-header></div>
+				<button data-delete-button data-tooltip="Delete Lane and Tasks"
+					class="icon-button red-text">&#x2716;</button>
+			</div>
+			<div class="tasks" data-drop-zone></div>
+			<form data-task-form>
+				<input data-task-input type="text" class="task-input" placeholder="Task name">
+			</form>
+		</div>
+	</template>
+	<template data-task-template>
+		<div class="task flex flex-row justify-content-end align-items-center" data-draggable>
+			<p data-task-name class="flex-grow-1 no-click no-margin padding-sm"></p>
+			<button data-delete-button class="icon-button">
+				<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+					<path fill="currentColor"
+						d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
+				</svg>
+			</button>
+		</div>
+	</template>
+</body>
+</html>

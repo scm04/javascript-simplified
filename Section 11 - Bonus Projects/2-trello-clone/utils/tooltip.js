@@ -1,4 +1,4 @@
-import addGlobalEventListener from "./utils/addGlobalEventListener.js"
+import addGlobalEventListener from "./addGlobalEventListener.js"
 
 // Default values for spacing and the order in which positions are tried.
 const DEFAULT_SPACING = 5

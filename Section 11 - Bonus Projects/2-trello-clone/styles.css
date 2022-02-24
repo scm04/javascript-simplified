@@ -1,0 +1,270 @@
+* {
+	box-sizing: border-box;
+	user-select: none;
+}
+
+body {
+	margin: 0;
+	background-color: #ccc;
+	height: 50vh;
+	overflow: hidden;
+}
+
+.lanes {
+	display: flex;
+	justify-content: center;
+	padding: 0.5rem;
+	height: 100%;
+}
+
+.lane {
+	display: flex;
+	flex-direction: column;
+	background-color: #aaa;
+	flex-basis: 0;
+	flex-grow: 1;
+	margin: 0.25rem;
+	border-radius: 0.25rem;
+	overflow: hidden;
+	max-width: 16rem;
+}
+
+.header {
+	text-align: center;
+	background-color: #333;
+	color: white;
+	padding: 0.25rem;
+}
+
+.tasks {
+	padding: 0 0.25rem;
+	flex-grow: 1;
+	overflow-y: auto;
+}
+
+.task {
+	padding: 0.25rem;
+	border-radius: 0.25rem;
+	background-color: white;
+	cursor: grab;
+	margin: 0.25rem 0;
+	text-align: center;
+	word-wrap: break-word;
+}
+
+.task-input {
+	padding: 0.3rem 0.5rem;
+	border: none;
+	background-color: #333;
+	color: white;
+	outline: none;
+	width: 100%;
+}
+
+.task-input::placeholder {
+	color: #aaa;
+}
+
+.new-lane-input {
+	margin: 0.1rem 0.25rem;
+	padding: 0.3rem 0.5rem;
+	border: none;
+	background-color: #333;
+	color: white;
+	outline: none;
+	width: 100%;
+	box-shadow: 0 0.1rem rgba(0, 0, 0, 0.5);
+}
+
+.new-lane-input::placeholder {
+	color: #aaa;
+}
+
+[data-draggable] {
+	user-select: none;
+}
+
+[data-draggable].hide {
+	display: none !important;
+}
+
+[data-draggable].dragging {
+	position: absolute;
+	opacity: 0.5;
+	transform: rotate(5deg);
+	pointer-events: none;
+}
+
+[data-draggable].ghost {
+	background-color: black;
+	opacity: 0.25;
+}
+
+.flex {
+	display: flex;
+}
+
+.justify-content-end {
+	justify-content: flex-end;
+}
+
+.icon-button {
+	background-color: #888;
+	color: white;
+	border-radius: 0.25rem;
+	margin: 0.1rem;
+	padding: 0.25rem;
+	border: none;
+	box-shadow: 0 0.1rem rgba(0, 0, 0, 0.5);
+	cursor: pointer;
+}
+
+.red-text {
+	color: red;
+	background-color: #ccc;
+}
+
+.tooltip-container {
+	position: fixed;
+	pointer-events: none;
+	margin: 0;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+}
+
+.tooltip {
+	position: absolute;
+	padding: 0.4rem;
+	border: 1px solid black;
+	border-radius: 0.25rem;
+	font-size: 1rem;
+	max-width: 200px;
+	background-color: white;
+	/* initial values for the variables used to position the arrow */
+	--arrow-translate-x: -50%;
+	--arrow-translate-y: 0%;
+	--arrow-border-size: 10px;
+	--arrow-border-top-color: inherit;
+	--arrow-border-left-color: transparent;
+	--arrow-border-right-color: transparent;
+	--arrow-border-bottom-color: transparent;
+	--arrow-body-top-color: white;
+	--arrow-body-left-color: transparent;
+	--arrow-body-right-color: transparent;
+	--arrow-body-bottom-color: transparent;
+	--arrow-top: 100%;
+	--arrow-left: 50%;
+	--arrow-right: 0%;
+	--arrow-bottom: 0%;
+}
+
+.tooltip::before {
+	content: "";
+	display: block;
+	position: absolute;
+	width: 0;
+	height: 0;
+	/* the following properties are controlled by variables */
+	transform: translateX(var(--arrow-translate-x)) translateY(var(--arrow-translate-y));
+	border: var(--arrow-border-size) solid;
+	border-top-color: var(--arrow-border-top-color);
+	border-left-color: var(--arrow-border-left-color);
+	border-right-color: var(--arrow-border-right-color);
+	border-bottom-color: var(--arrow-border-bottom-color);
+	top: var(--arrow-top);
+	left: var(--arrow-left);
+	right: calc(var(--arrow-right) - (var(--arrow-border-size) * 2));
+	bottom: var(--arrow-bottom);
+}
+
+.tooltip::after {
+	content: "";
+	display: block;
+	position: absolute;
+	width: 0;
+	height: 0;
+	/* the following properties are controlled by variables */
+	transform: translateX(calc(var(--arrow-translate-x) - 1px))
+		translateY(var(--arrow-translate-y));
+	border: calc(var(--arrow-border-size) - 1px) solid;
+	border-top-color: var(--arrow-body-top-color);
+	border-left-color: var(--arrow-body-left-color);
+	border-right-color: var(--arrow-body-right-color);
+	border-bottom-color: var(--arrow-body-bottom-color);
+	top: var(--arrow-top);
+	left: calc(var(--arrow-left) + 1px);
+	right: calc(var(--arrow-right) - (var(--arrow-border-size) * 2));
+	bottom: var(--arrow-bottom);
+}
+
+.popup {
+	position: absolute;
+	width: 75%;
+	height: 90%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border: 1px solid black;
+	padding: 1rem;
+	border-radius: 0.25rem;
+	background-color: white;
+}
+
+.popup-overlay {
+	display: block;
+	position: absolute;
+	inset: 0;
+	background-color: rgba(0, 0, 0, 0.75);
+}
+
+.hide {
+	display: none;
+}
+
+.flex-direction-column {
+	flex-direction: column;
+}
+
+.flex-grow-1 {
+	flex-grow: 1;
+}
+
+.popup-button {
+	margin-top: 0.5rem;
+	margin-left: 0.5rem;
+	width: 10rem;
+	height: 3rem;
+	border-radius: 0.25rem;
+	border: none;
+	box-shadow: 0 0.1rem rgba(0, 0, 0, 0.5);
+}
+
+.display-none {
+	display: none;
+}
+
+.no-resize {
+	resize: none;
+}
+
+.align-items-center {
+	align-items: center;
+}
+
+.justify-content-center {
+	justify-content: center;
+}
+
+.no-click {
+	pointer-events: none;
+}
+
+.no-margin {
+	margin: 0;
+}
+
+.padding-sm {
+	padding: 0.25rem;
+}
