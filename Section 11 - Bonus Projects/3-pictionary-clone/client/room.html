@@ -12,6 +12,30 @@
 	<canvas class="game-board" data-canvas></canvas>
 	<section class="text-section">
 		<h3 class="word" data-word></h3>
+		<div class="drawing-tools" data-drawing-tools>
+			<div class="color-picker-container">
+				<label for="color-picker">Choose line color</label>
+				<input type="color" name="color-picker" id="color-picker" data-color-picker />
+			</div>
+			<div class="row">
+				<div class="line-width-container">
+					<label for="line-width">Choose line width</label>
+					<select name="line-width" id="line-width" class="line-width-selector" data-line-width-selector>
+						<option value="0.5">Thin</option>
+						<option value="1" selected>Normal</option>
+						<option value="2">Thick</option>
+						<option value="3">Extra Thick</option>
+					</select>
+				</div>
+				<button class="eraser-btn" data-eraser-btn>
+					<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+						<path fill="black" stroke="black" stroke-width="2"
+							d="M15.14,3C14.63,3 14.12,3.2 13.73,3.59L2.59,14.73C1.81,15.5 1.81,16.77 2.59,17.56L5.03,20H12.69L21.41,11.27C22.2,10.5 22.2,9.23 21.41,8.44L16.56,3.59C16.17,3.2 15.65,3 15.14,3M17,20H24" />
+					</svg>
+				</button>
+			</div>
+			<div data-erasing-message class="erasing-message">Erasing...</div>
+		</div>
 		<div class="messages" data-messages></div>
 		<form class="guess-form" data-guess-form>
 			<input type="text" data-guess-input class="guess-input" placeholder="Your Guess..." />

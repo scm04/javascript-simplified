@@ -70,10 +70,36 @@ function resizeCanvas() {
 	canvas.height = clientDimensions.height
 }
 
+// Drawing Tools (Used for Challenges 1 and 2)
+const drawingTools = document.querySelector("[data-drawing-tools]")
+
+/**
+ * Challenge 3: Add the ability for the drawer to erase things.
+ */
+const eraserBtn = document.querySelector("[data-eraser-btn]")
+const erasingMessage = document.querySelector("[data-erasing-message]")
+eraserBtn.addEventListener("click", () => {
+	eraserBtn.classList.toggle("active")
+	if (eraserBtn.classList.contains("active")) {
+		show(erasingMessage)
+		drawableCanvas.erasing = true
+	} else {
+		hide(erasingMessage)
+		drawableCanvas.erasing = false
+	}
+	socket.emit("toggle-erasing")
+})
+socket.on("toggle-erasing", () => {
+	drawableCanvas.erasing = !drawableCanvas.erasing
+})
+
 // Round logic
 function startRoundDrawer(word) {
+	show(drawingTools)
+	hide(erasingMessage)
+	eraserBtn.classList.remove("active")
 	drawableCanvas.canDraw = true
-	drawableCanvas.clearCanvas()
+	drawableCanvas.resetCanvas()
 
 	messagesElement.innerHTML = ""
 	wordElement.innerText = word
@@ -82,7 +108,9 @@ function startRoundDrawer(word) {
 function startRoundGuesser() {
 	show(guessForm)
 	hide(wordElement)
-	drawableCanvas.clearCanvas()
+	hide(erasingMessage)
+	eraserBtn.classList.remove("active")
+	drawableCanvas.resetCanvas()
 
 	messagesElement.innerHTML = ""
 	wordElement.innerText = ""
@@ -99,6 +127,7 @@ function endRound(name = null, word = null) {
 	drawableCanvas.canDraw = false
 	show(readyButton)
 	hide(guessForm)
+	hide(drawingTools)
 }
 
 function hide(element) {
@@ -108,18 +137,6 @@ function hide(element) {
 function show(element) {
 	element.classList.remove("hide")
 }
-
-/**
- * Challenge 1: Add the ability for the drawer to choose the stroke color.
- */
-
-/**
- * Challenge 2: Add the ability for the drawer to choose the stoke weight.
- */
-
-/**
- * Challenge 3: Add the ability for the drawer to erase things.
- */
 
 /**
  * Challenge 4: Prevent people from joining a room mid-game.
