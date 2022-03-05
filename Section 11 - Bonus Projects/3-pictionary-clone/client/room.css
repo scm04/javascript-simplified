@@ -34,6 +34,60 @@ body {
 	font-weight: normal;
 }
 
+.drawing-tools {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	color: lightgrey;
+	justify-content: center;
+}
+
+.color-picker-container {
+	display: flex;
+	flex-direction: column;
+}
+
+#color-picker {
+	width: 100%;
+}
+
+.row {
+	display: flex;
+	flex-direction: row;
+	margin-top: 0.25rem;
+}
+
+.line-width-container {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
+
+.line-width-selector {
+	text-align: center;
+}
+
+.eraser-btn {
+	margin-left: 0.25rem;
+	width: fit-content;
+}
+
+.eraser-btn.active {
+	background-color: #b4d2ea;
+}
+
+.eraser-btn > svg > path {
+	fill: transparent;
+}
+
+.eraser-btn.active > svg > path {
+	fill: black;
+}
+
+.erasing-message {
+	text-align: end;
+}
+
 .messages {
 	flex-grow: 1;
 	min-height: 5rem;

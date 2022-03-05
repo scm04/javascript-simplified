@@ -49,6 +49,27 @@ io.on("connection", socket => {
 			}
 		})
 
+		/**
+		 * Challenge 1: Add the ability for the drawer to choose the line color.
+		 */
+		socket.on("change-draw-color", data => {
+			socket.to(room.id).emit("draw-color", data.color)
+		})
+
+		/**
+		 * Challenge 2: Add the ability for the drawer to choose the line width.
+		 */
+		socket.on("change-line-width", data => {
+			socket.to(room.id).emit("line-width", data.lineWidth)
+		})
+
+		/**
+		 * Challenge 3: Add the ability for the drawer to erase things.
+		 */
+		socket.on("toggle-erasing", () => {
+			socket.to(room.id).emit("toggle-erasing")
+		})
+
 		socket.on("disconnect", () => {
 			room.users = room.users.filter(u => u.id !== user.id)
 		})
