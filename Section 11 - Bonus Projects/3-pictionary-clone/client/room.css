@@ -17,6 +17,35 @@ body {
 	display: block;
 }
 
+.popup-section {
+	display: block;
+}
+
+.overlay {
+	position: absolute;
+	inset: 0;
+	background-color: rgba(0, 0, 0, 0.75);
+}
+
+.popup {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border: 1px solid black;
+	padding: 1rem;
+	border-radius: 0.25rem;
+	background-color: white;
+}
+
+.popup > .row.flex-end > button {
+	margin-left: 0.5rem;
+}
+
+.flex-end {
+	justify-content: flex-end;
+}
+
 .text-section {
 	margin-left: 0.5rem;
 	display: flex;

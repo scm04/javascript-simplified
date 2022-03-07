@@ -31,9 +31,17 @@ export default function DrawableCanvas(canvas, socket) {
 				this.lineWidth,
 				this.erasing
 			)
+			// I want to change this to also include whether or not
+			// the drawer is currently erasing, that way I can easily
+			// store the history of lines drawn on the server so I can
+			// pass the it on to people who join mid-round and they
+			// won't be left out.
 			socket.emit("draw", {
 				start: normalizePosition(prevPosition),
-				end: normalizePosition(newPosition)
+				end: normalizePosition(newPosition),
+				strokeColor: this.strokeColor,
+				lineWidth: this.lineWidth,
+				erasing: this.erasing
 			})
 		}
 
@@ -42,13 +50,13 @@ export default function DrawableCanvas(canvas, socket) {
 
 	canvas.addEventListener("mouseleave", () => (prevPosition = null))
 
-	socket.on("draw-line", (start, end) => {
+	socket.on("draw-line", ({ start, end, strokeColor, lineWidth, erasing }) => {
 		drawLine(
 			toCanvasSpace(start),
 			toCanvasSpace(end),
-			this.strokeColor,
-			this.lineWidth,
-			this.erasing
+			strokeColor,
+			lineWidth,
+			erasing
 		)
 	})
 
@@ -59,9 +67,16 @@ export default function DrawableCanvas(canvas, socket) {
 	colorPicker.addEventListener("change", this.setStrokeColor)
 	this.setStrokeColor = e => {
 		this.strokeColor = e.target.value
-		socket.emit("change-draw-color", { color: e.target.value })
+
+		// Obsoleted during Challenge 4 when drawing was updated to pass
+		// all drawing parameters to the server to help facilitate
+		// spectating for those on the wait-list.
+		// socket.emit("change-draw-color", { color: e.target.value })
 	}
-	socket.on("draw-color", color => (this.strokeColor = color))
+	// Obsoleted during Challenge 4 when drawing was updated to pass
+	// all drawing parameters to the server to help facilitate
+	// spectating for those on the wait-list.
+	// socket.on("draw-color", color => (this.strokeColor = color))
 
 	/**
 	 * Challenge 2: Add the ability for the drawer to choose the line width.
@@ -70,9 +85,16 @@ export default function DrawableCanvas(canvas, socket) {
 	lineWidthSelector.addEventListener("change", this.setLineWidth)
 	this.setLineWidth = e => {
 		this.lineWidth = e.target.value
-		socket.emit("change-line-width", { lineWidth: e.target.value })
+
+		// Obsoleted during Challenge 4 when drawing was updated to pass
+		// all drawing parameters to the server to help facilitate
+		// spectating for those on the wait-list.
+		// socket.emit("change-line-width", { lineWidth: e.target.value })
 	}
-	socket.on("line-width", lineWidth => (this.lineWidth = lineWidth))
+	// Obsoleted during Challenge 4 when drawing was updated to pass
+	// all drawing parameters to the server to help facilitate
+	// spectating for those on the wait-list.
+	// socket.on("line-width", lineWidth => (this.lineWidth = lineWidth))
 
 	this.resetDrawingTools = function () {
 		this.strokeColor = this.DEFAULT_COLOR
@@ -85,6 +107,24 @@ export default function DrawableCanvas(canvas, socket) {
 		lineWidthSelector.value = this.lineWidth
 		lineWidthSelector.addEventListener("change", this.setLineWidth)
 	}
+
+	/**
+	 * Challenge 4: Prevent people from joining a room mid-game.
+	 * 		- When someone joins the wait-list, the server will
+	 * 			send them the previously drawn lines so they can
+	 * 			see what's already happened.
+	 */
+	socket.on("canvas-data", canvasLines => {
+		for (const { start, end, strokeColor, lineWidth, erasing } of canvasLines) {
+			drawLine(
+				toCanvasSpace(start),
+				toCanvasSpace(end),
+				strokeColor,
+				lineWidth,
+				erasing
+			)
+		}
+	})
 
 	function clearCanvas() {
 		const context = canvas.getContext("2d")
