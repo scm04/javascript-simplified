@@ -10,6 +10,18 @@
 </head>
 <body>
 	<canvas class="game-board" data-canvas></canvas>
+	<section class="popup-section hide" data-popup-section>
+		<div class="overlay"></div>
+		<div class="popup" data-game-in-progress-popup>
+			<h2>Game in Progress</h2>
+			<p>There is currently a game in progress for this room. Would you like to join the wait-list or try another
+				room?</p>
+			<div class="row flex-end">
+				<button data-wait-list-btn>Join Wait-list</button>
+				<button data-different-room-btn>Try Different Room</button>
+			</div>
+		</div>
+	</section>
 	<section class="text-section">
 		<h3 class="word" data-word></h3>
 		<div class="drawing-tools" data-drawing-tools>

@@ -17,6 +17,14 @@ socket.on("start-drawer", startRoundDrawer)
 socket.on("start-guesser", startRoundGuesser)
 socket.on("guess", displayGuess)
 socket.on("winner", endRound)
+// For Challenge 4 (see section below for details)
+socket.on("game-in-progress", showPopupSection)
+
+// For Challenge 3 (see section below for details)
+// Obsoleted during Challenge 4 when drawing was updated to pass
+// all drawing parameters to the server to help facilitate
+// spectating for those on the wait-list.
+// socket.on("toggle-erasing", toggleErasing)
 
 // Elements
 const guessInput = document.querySelector("[data-guess-input]")
@@ -87,10 +95,39 @@ eraserBtn.addEventListener("click", () => {
 		hide(erasingMessage)
 		drawableCanvas.erasing = false
 	}
-	socket.emit("toggle-erasing")
+
+	// Obsoleted during Challenge 4 when drawing was updated to pass
+	// all drawing parameters to the server to help facilitate
+	// spectating for those on the wait-list.
+	// socket.emit("toggle-erasing")
 })
-socket.on("toggle-erasing", () => {
-	drawableCanvas.erasing = !drawableCanvas.erasing
+
+// Obsoleted during Challenge 4 when drawing was updated to pass
+// all drawing parameters to the server to help facilitate
+// spectating for those on the wait-list.
+// function toggleErasing() {
+// 	drawableCanvas.erasing = !drawableCanvas.erasing
+// }
+
+/**
+ * Challenge 4: Prevent people from joining a room mid-game.
+ * 		- Give the user a warning that the room already has a game in
+ * 			progress and allow them to choose whether to join the wait-
+ * 			list for the current room or go back to select a different room.
+ */
+const popupSection = document.querySelector("[data-popup-section]")
+function showPopupSection() {
+	show(popupSection)
+	hide(readyButton)
+}
+const waitListBtn = document.querySelector("[data-wait-list-btn]")
+waitListBtn.addEventListener("click", () => {
+	hide(popupSection)
+	socket.emit("wait-list")
+})
+const differentRoomBtn = document.querySelector("[data-different-room-btn]")
+differentRoomBtn.addEventListener("click", () => {
+	window.location = `/index.html?name=${name}`
 })
 
 // Round logic
@@ -137,14 +174,3 @@ function hide(element) {
 function show(element) {
 	element.classList.remove("hide")
 }
-
-/**
- * Challenge 4: Prevent people from joining a room mid-game.
- * 		- Suggestion 1: Add them to a waiting list.
- * 		- Suggestion 2: Give them a warning that the room already has a game in
- * 			progress.
- * 		- Suggestion 3: Some combination of 1 and 2 (maybe give the user a warning
- * 			and let them choose whether to go onto a wait-list or try another room).
- * 		- Suggestion 4: Suggestion 3 + the ability to spectate the current round while
- * 			in the wait-list.
- */
