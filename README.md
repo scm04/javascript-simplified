@@ -1,6 +1,6 @@
 # javascript-simplified
 
-The home for all of my code for the [JavaScript Simplified course](https://courses.webdevsimplified.com) created by [WebDevSimplified](https://www.youtube.com/webdevsimplified). The course is broken into small videos that cover various JavaScript topics, many of which are accompanied by activities and projects that reinforce the topics covered. Below is a list of links to each of the projects that I completed for this class.
+The home for all of my code for the [JavaScript Simplified course](https://courses.webdevsimplified.com) created by [Web Dev Simplified](https://www.youtube.com/webdevsimplified). The course is broken into small videos that cover various JavaScript topics, many of which are accompanied by activities and projects that reinforce the topics covered. Below is a list of links to each of the projects that I completed for this class.
 
 ## Client Only
 
@@ -26,6 +26,10 @@ To run these projects, download the repository, open a terminal in the directory
 -   [Shopping Cart](/beginner-course/Section%2010%20-%20Modules%20and%20Bundlers/74-shopping-cart/my-solution) (lesson 74 in Section 10 - Modules and Bundlers)
 -   [Tooltip Library](/beginner-course/Section%2011%20-%20Bonus%20Projects/1-tooltip-library) (the first bonus project for the beginner course, found in Section 11 - Bonus Projects)
 -   [Trello Clone](/beginner-course/Section%2011%20-%20Bonus%20Projects/2-trello-clone) (the second bonus project for the beginner course, found in Section 11 - Bonus Projects)
+
+### Advanced Course
+
+-   [Minesweeper Clone](/Section%202%20-%20Advanced%20Features/15-minesweeper/my-solution) (lesson 15 in Section 2 - Advanced Features)
 
 ## Client and Server
 
