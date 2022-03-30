@@ -14,6 +14,11 @@ These projects only have a client and don't require anything special to see in a
 -   [Simple Expand/Collapse Mechanism](/beginner-course/Section%209%20-%20Advanced%20DOM/66-and-67-expand-collapse-project/) (lessons 66 and 67 in Section 9 - Advanced DOM)
 -   [Simple Google Maps Clone using MapBox](/beginner-course/Section%209%20-%20Advanced%20DOM/68-google-maps-clone/) (lesson 68 in Section 9 - Advanced DOM)
 
+### Advanced Course
+
+-   [Minesweeper Clone](/Section%202%20-%20Advanced%20Features/15-minesweeper/my-solution) (lesson 15 in Section 2 - Advanced Features)
+-   [Simple Math Solver](/Section%202%20-%20Advanced%20Features/16-and-17-math-solver/my-solution) (lessons 16 and 17 in Section 2 - Advanced Features)
+
 ## Client Only with Node Modules
 
 These projects are still client-only projects, but they use the Parcel bundler to allow the browser to use Node modules.
@@ -26,10 +31,6 @@ To run these projects, download the repository, open a terminal in the directory
 -   [Shopping Cart](/beginner-course/Section%2010%20-%20Modules%20and%20Bundlers/74-shopping-cart/my-solution) (lesson 74 in Section 10 - Modules and Bundlers)
 -   [Tooltip Library](/beginner-course/Section%2011%20-%20Bonus%20Projects/1-tooltip-library) (the first bonus project for the beginner course, found in Section 11 - Bonus Projects)
 -   [Trello Clone](/beginner-course/Section%2011%20-%20Bonus%20Projects/2-trello-clone) (the second bonus project for the beginner course, found in Section 11 - Bonus Projects)
-
-### Advanced Course
-
--   [Minesweeper Clone](/Section%202%20-%20Advanced%20Features/15-minesweeper/my-solution) (lesson 15 in Section 2 - Advanced Features)
 
 ## Client and Server
 
