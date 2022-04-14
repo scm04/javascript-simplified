@@ -1,0 +1,2 @@
+I think Kyle's solution was much better for this project. The one place where mine was better was that mine ignored any whitespace entered into the equation, so you could choose whether or not to use whitespace when entering the equations (Kyle's solution only works if you enter whitespace).
+Aside from that, Kyle's solution was simpler and much easier for me to understand. I'd be curious to know how long it took for him to come up with that solution, because it took me literally weeks of stewing over the problem in the back of my mind to come up with the approach I used.
