@@ -45,3 +45,11 @@ In the `client` directory terminal, run the command `npm start` to start up Parc
 ### Beginner Course (found in the `beginner-course` directory)
 
 -   [Pictionary Clone](/beginner-course/Section%2011%20-%20Bonus%20Projects/3-pictionary-clone) (the third and final bonus project for the beginner course, found in Section 11 - Bonus Projects)
+
+## Command Line Interface (CLI) Projects (Node only; no browser)
+
+These projects are command line projects that do not require a browser to run. To use them, download the repository, navigate the folder for the CLI tool you wish to use, open a terminal in that folder, run the command `node script.js`, and follow the on-screen prompts. As these projects are intended to help reinforce one or more concepts from the course, most of them will mimic database functionality using the file system rather than implementing a true database.
+
+### Advanced Course
+
+-   [ATM CLI](/Section%204%20-%20Object%20Oriented%20Programming/26-atm-cli-project) (lesson 26 in Section 4 - Object Oriented Programming)

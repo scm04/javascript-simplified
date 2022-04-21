@@ -1,0 +1,11 @@
+{
+	"name": "26-atm-cli-project",
+	"version": "1.0.0",
+	"description": "",
+	"main": "script.js",
+	"type": "module",
+	"scripts": {},
+	"keywords": [],
+	"author": "",
+	"license": "ISC"
+}
