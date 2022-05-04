@@ -1,0 +1,17 @@
+I enjoyed this project quite a lot. I feel like both my solution and Kyle's have merits for different reasons.
+
+Kyle's solution is great because it's incredibly simple and really drives home the OOP concepts he wanted us to practice in this project.
+
+My project used the OOP concepts, but where it shines is its power compared to Kyle's. Kyle's solution can only handle one operation at a time, and you can't even change your mind if you accidentally click the wrong operation. My solution allows the user to change the operation so long as they have not modified the primary operand since the last time they selected an operation. Additionally, my original solution allows the user to continue chaining operations together without using the equals key by evaluating the current expression once a new operation is selected, so long as the condition for changing the operation hasn't been met (i.e. they have actually entered something in the primary operand). Finally, my calculator also elegantly handles the divide by zero error by putting a message into the primary operand and allowing the user to have a second attempt at entering the operand they wanted.
+
+As an additional challenge to myself, I created a more flexible version of the calculator that does not evaluate anything until the enter key is pressed. In practice, this means the user may enter a series of operations (for example "2 + 2 * 2 + 2 / 2 + 2") and only when they press enter will it be evaluated. This version of the calculator respects order of operations, so entering the sequence "2 * 2 + 2 + 2 * 2 / 2 / 2" would evaluate to 7 in this version of the calculator, while it would evaluate to 4 in my original solution.
+
+Overall, I had a lot of fun building out this project, but I think my biggest takeaway is that I can definitely practice simplifying. I tend to add things that would be nice or that are extra above what Kyle requires, and while that's not a bad thing, I do think it sometimes distracts me from what I should be learning.
+
+I also learned that I need to pay better attention to what Kyle actually asks us to do. He mentioned that we should display formatted numbers in the calculator so that there are commas in the appropriate places to make it easier to read. I totally forgot about that.
+
+So, takeaways:
+- I need to work on sticking to the basics. Anything extra I want to do can be done as a challenge after I've completed the requirements Kyle set out.
+- I need to pay better attention to the requirements Kyle sets out so I don't miss the little things.
+
+Moving forward, I think I'm going to make a spec with Kyle's requirements in it that I will use to make my initial solution. I think I will also keep my challenge code separate from my original solutions (where it makes sense to do so) in order to not clutter my code with things that aren't necessarily related to what Kyle is trying to teach.

@@ -18,6 +18,7 @@ These projects only have a client and don't require anything special to see in a
 
 -   [Minesweeper Clone](/Section%202%20-%20Advanced%20Features/15-minesweeper/my-solution) (lesson 15 in Section 2 - Advanced Features)
 -   [Simple Math Solver](/Section%202%20-%20Advanced%20Features/16-and-17-math-solver/my-solution) (lessons 16 and 17 in Section 2 - Advanced Features)
+-   [Basic Calculator](/Section%204%20-%20Object%20Oriented%20Programming/27-and-28-calculator-project/my-solution) (lessons 27 and 28 in Section 4 - Object Oriented Programming)
 
 ## Client Only with Node Modules
 
