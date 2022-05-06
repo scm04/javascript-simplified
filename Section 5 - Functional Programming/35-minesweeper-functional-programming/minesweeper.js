@@ -1,3 +1,5 @@
+import { times, range } from "lodash/fp"
+
 export const TILE_STATUSES = {
 	HIDDEN: "hidden",
 	MINE: "mine",
@@ -5,63 +7,70 @@ export const TILE_STATUSES = {
 	MARKED: "marked"
 }
 
-export function createBoard(boardSize, numberOfMines) {
-	const board = []
-	const minePositions = getMinePositions(boardSize, numberOfMines)
-
-	for (let x = 0; x < boardSize; x++) {
-		const row = []
-		for (let y = 0; y < boardSize; y++) {
-			const element = document.createElement("div")
-			element.dataset.status = TILE_STATUSES.HIDDEN
-			const tile = {
-				element,
+export function createBoard(boardSize, minePositions) {
+	return times(x => {
+		return times(y => {
+			return {
 				x,
 				y,
 				mine: minePositions.some(positionMatch.bind(null, { x, y })),
-				get status() {
-					return this.element.dataset.status
-				},
-				set status(value) {
-					this.element.dataset.status = value
-				}
+				status: TILE_STATUSES.HIDDEN
 			}
-			row.push(tile)
-		}
-		board.push(row)
-	}
-
-	return board
+		}, boardSize)
+	}, boardSize)
 }
 
-export function markTile(tile) {
+export function markedTilesCount(board) {
+	return board.reduce((count, row) => {
+		return count + row.filter(tile => tile.status === TILE_STATUSES.MARKED).length
+	}, 0)
+}
+
+export function markTile(board, { x, y }) {
+	const tile = board[x][y]
 	if (tile.status !== TILE_STATUSES.HIDDEN && tile.status !== TILE_STATUSES.MARKED) {
-		return
+		return board
 	}
 
 	if (tile.status === TILE_STATUSES.MARKED) {
-		tile.status = TILE_STATUSES.HIDDEN
+		return replaceTile(board, { x, y }, { ...tile, status: TILE_STATUSES.HIDDEN })
 	} else {
-		tile.status = TILE_STATUSES.MARKED
+		return replaceTile(board, { x, y }, { ...tile, status: TILE_STATUSES.MARKED })
 	}
 }
 
-export function revealTile(board, tile) {
-	if (tile.status !== TILE_STATUSES.HIDDEN) return
+function replaceTile(board, position, newTile) {
+	return board.map((row, x) => {
+		return row.map((tile, y) => {
+			if (positionMatch(position, { x, y })) {
+				return newTile
+			}
+			return tile
+		})
+	})
+}
+
+export function revealTile(board, { x, y }) {
+	const tile = board[x][y]
+	if (tile.status !== TILE_STATUSES.HIDDEN) return board
 
 	if (tile.mine) {
-		tile.status = TILE_STATUSES.MINE
-		return
+		return replaceTile(board, { x, y }, { ...tile, status: TILE_STATUSES.MINE })
 	}
 
-	tile.status = TILE_STATUSES.NUMBER
 	const adjacentTiles = nearbyTiles(board, tile)
-	const mines = adjacentTiles.filter(t.mine)
+	const mines = adjacentTiles.filter(t => t.mine)
+	const newBoard = replaceTile(
+		board,
+		{ x, y },
+		{ ...tile, status: TILE_STATUSES.NUMBER, adjacentMinesCount: mines.length }
+	)
 	if (mines.length === 0) {
-		adjacentTiles.forEach(revealTile.bind(null, board))
-	} else {
-		tile.element.textContent = mines.length
+		return adjacentTiles.reduce((b, t) => {
+			return revealTile(b, t)
+		}, newBoard)
 	}
+	return newBoard
 }
 
 export function checkWin(board) {
@@ -85,35 +94,18 @@ export function checkLose(board) {
 	})
 }
 
-function getMinePositions(boardSize, numberOfMines) {
-	const positions = []
-	while (positions.length < numberOfMines) {
-		const position = {
-			x: randomNumber(boardSize),
-			y: randomNumber(boardSize)
-		}
-		if (!positions.some(positionMatch.bind(null, position))) {
-			positions.push(position)
-		}
-	}
-	return positions
-}
-
-function positionMatch(a, b) {
+export function positionMatch(a, b) {
 	return a.x === b.x && a.y === b.y
 }
 
-function randomNumber(size) {
-	return Math.floor(Math.random() * size)
-}
-
 function nearbyTiles(board, { x, y }) {
-	const tiles = []
-	for (let xOffset = -1; xOffset <= 1; xOffset++) {
-		for (let yOffset = -1; yOffset <= 1; yOffset++) {
-			const tile = board[x + xOffset]?.[y + yOffset]
-			if (tile) tiles.push(tile)
-		}
-	}
-	return tiles
+	const offsets = range(-1, 2)
+
+	return offsets
+		.flatMap(xOffset => {
+			return offsets.map(yOffset => {
+				return board[x + xOffset]?.[y + yOffset]
+			})
+		})
+		.filter(tile => tile != null)
 }
