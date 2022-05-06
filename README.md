@@ -33,6 +33,10 @@ To run these projects, download the repository, open a terminal in the directory
 -   [Tooltip Library](/beginner-course/Section%2011%20-%20Bonus%20Projects/1-tooltip-library) (the first bonus project for the beginner course, found in Section 11 - Bonus Projects)
 -   [Trello Clone](/beginner-course/Section%2011%20-%20Bonus%20Projects/2-trello-clone) (the second bonus project for the beginner course, found in Section 11 - Bonus Projects)
 
+### Advanced Course
+
+-   [Minesweeper Clone](/Section%205%20-%20Functional%20Programming/35-minesweeper-functional-programming/) using Functional Programming (lesson 35 in Section 5 - Functional Programming)
+
 ## Client and Server
 
 These projects have both a client and a server. The client again uses the Parcel bundler to allow the browser to use Node modules. The server in these apps does not have any kind of database component and acts only as a bridge between multiple clients using `socket.io`.
