@@ -1,6 +1,5 @@
 // Activity 1: Create an array with the first 5 letters of the
-// alphabet, then print out the middle element in the array
-// ('c').
+// alphabet, then print out the middle element in the array ('c').
 const alphabet = ["a", "b", "c", "d", "e"]
 console.log(alphabet[2]) // 'c'
 
