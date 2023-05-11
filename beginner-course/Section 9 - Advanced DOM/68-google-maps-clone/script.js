@@ -1,5 +1,8 @@
-const MAPBOX_ACCESS_TOKEN =
-	"pk.eyJ1Ijoic2NtMDQiLCJhIjoiY2t6NHJnMnM2MGQ3bzJ1cG5tM3Y2OW0xZyJ9.3SgyMm7I8LFK5C2YWDI5yw"
+// NOTE: This project is non-functional because it does not have access to my API token.
+// This is to prevent my token from being abused since I am planning to leave this
+// repository publicly accessible so that it can be viewed as part of my portfolio.
+// To make this work, just replace the placeholder string below with a mapbox API token.
+const MAPBOX_ACCESS_TOKEN = "<mapbox token here>"
 
 navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
 	enableHighAccuracy: true

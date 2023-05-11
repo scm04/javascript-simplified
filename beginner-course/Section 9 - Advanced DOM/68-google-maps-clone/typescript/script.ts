@@ -1,26 +1,34 @@
-const MAPBOX_ACCESS_TOKEN =
-	"pk.eyJ1Ijoic2NtMDQiLCJhIjoiY2t6NHJnMnM2MGQ3bzJ1cG5tM3Y2OW0xZyJ9.3SgyMm7I8LFK5C2YWDI5yw"
+// NOTE: This project is non-functional because it does not have access to my API token.
+// This is to prevent my token from being abused since I am planning to leave this
+// repository publicly accessible so that it can be viewed as part of my portfolio.
+// To make this work, just replace the placeholder string below with a mapbox API token.
+const MAPBOX_ACCESS_TOKEN = "<mapbox token here>"
 
 navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
 	enableHighAccuracy: true
 })
 
-// The following lines tell the TS compiler that mapboxgl and MapboxDirections
-// are defined somewhere else and will be available in this file. Under normal circumstances,
-// it would be better to declare an actual type, but I was not able to find an easy way
-// to get the types in this file, so I just used "any" so that the I'm not getting an error.
-// From my experience with this, I think the best approach for something like this is to
-// use npm rather than a CDN as we did with the original solution, as shown by Kyle, because
-// that allows us to import the types and have actual type safety, whereas my current solution
-// is just giving anything with an unknown type the type of "any" so that it doesn't throw
-// any errors.
-// With that in mind, I think I am going to do a completely separate typescript version
-// of the project so that I can actually use npm to give myself true type safety, so I will do
-// that the next time I work on this class.
+function successLocation(position: GeolocationPosition) {
+	setupMap([position.coords.longitude, position.coords.latitude] as LngLat)
+}
+
+function errorLocation() {
+	setupMap([-2.24, 53.48] as LngLat)
+}
+
+// The following statements allow my project to work without any errors.
+// I tried very hard to create a project that would allow me to do everything
+// with Node modules so that my module could actually know what types the mapboxgl
+// and MapboxDirections modules contained, but unfortunately, the MapboxDirections
+// package does has some issues that make it impossible for me to do the project in
+// Typescript (some of the errors it causes are beyond my ability to fix),
+// so for the sake of moving forward with my learning, I decided to do it this way
+// and move on.
 declare const mapboxgl: any
 declare const MapboxDirections: any
 
-function setupMap(centerPosition: [number, number]) {
+type LngLat = [number, number]
+function setupMap(centerPosition: LngLat) {
 	const map = new mapboxgl.Map({
 		accessToken: MAPBOX_ACCESS_TOKEN,
 		container: "map",
@@ -37,13 +45,3 @@ function setupMap(centerPosition: [number, number]) {
 	})
 	map.addControl(directionControls, "top-left")
 }
-
-function successLocation(position) {
-	setupMap([position.coords.longitude, position.coords.latitude])
-}
-
-function errorLocation() {
-	setupMap([-2.24, 53.48])
-}
-
-export {}
