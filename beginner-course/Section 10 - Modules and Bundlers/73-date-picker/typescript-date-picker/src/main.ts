@@ -6,25 +6,34 @@ import {
 	endOfMonth,
 	eachDayOfInterval,
 	startOfDay,
-	isEqual
+	isEqual,
+	addMonths
 } from "date-fns"
 
 // 1. On load: populate the date picker button with the current date.
-const datePicker = document.querySelector(".date-picker") as HTMLDivElement
-datePicker.dataset.selectedDate = new Date().toDateString()
 const datePickerToggle = document.querySelector(
 	".date-picker-button"
 ) as HTMLButtonElement
-function setDatePickerToggleLabel(dateString: string) {
+function updateDatePickerToggle(dateString: string) {
+	datePickerToggle.dataset.selectedDate = dateString
 	datePickerToggle.textContent = format(new Date(dateString), "MMMM d, y")
 }
-setDatePickerToggleLabel(datePicker.dataset.selectedDate)
+updateDatePickerToggle(new Date().toDateString())
 
 // 2. Date Picker Button: When clicked, toggle the visibility of the date picker
 //		and populate it if it is visible.
+const datePicker = document.querySelector(".date-picker") as HTMLDivElement
+function setDateToShow(dateString: string) {
+	datePicker.dataset.dateToShow = startOfMonth(new Date(dateString)).toDateString()
+}
+setDateToShow(datePickerToggle.dataset.selectedDate!)
 datePickerToggle.addEventListener("click", () => {
 	datePicker.classList.toggle("show")
-	populateDatePicker()
+	if (datePicker.classList.contains("show")) {
+		populateDatePicker()
+	} else {
+		setDateToShow(datePickerToggle.dataset.selectedDate!)
+	}
 })
 
 // 2. a) If the date picker is visible:
@@ -32,15 +41,9 @@ datePickerToggle.addEventListener("click", () => {
 //	- Clear the calendar grid.
 //	- Populate the calendar grid with the days of the current month.
 //	- Add days from the previous and next months to fill out the first and last weeks.
-function populateDatePicker(dateToShow: Date | null = null) {
-	if (!datePicker.classList.contains("show")) return
-
-	const selectedDate = startOfDay(new Date(datePicker.dataset.selectedDate!))
-	if (dateToShow === null) {
-		dateToShow = startOfMonth(selectedDate)
-	} else if (!isEqual(startOfMonth(dateToShow), dateToShow)) {
-		dateToShow = startOfMonth(dateToShow)
-	}
+function populateDatePicker() {
+	const selectedDate = startOfDay(new Date(datePickerToggle.dataset.selectedDate!))
+	const dateToShow = startOfDay(new Date(datePicker.dataset.dateToShow!))
 
 	updateCurrentMonth(dateToShow)
 	populateDateGrid(dateToShow, selectedDate)
@@ -48,17 +51,36 @@ function populateDatePicker(dateToShow: Date | null = null) {
 
 const currentMonth = datePicker.querySelector(".current-month") as HTMLDivElement
 function updateCurrentMonth(dateToShow: Date) {
-	currentMonth.dataset.dateToShow = dateToShow.toDateString()
 	currentMonth.textContent = `${format(dateToShow, "LLLL")} - ${format(
 		dateToShow,
 		"y"
 	)}`
 }
 // 3. Previous Month Button: When clicked, repopulate the date picker with the previous month.
+function changeMonth(modifier: number) {
+	setDateToShow(
+		addMonths(new Date(datePicker.dataset.dateToShow!), modifier).toDateString()
+	)
+}
+const previousMonthButton = datePicker.querySelector(
+	".prev-month-button"
+) as HTMLButtonElement
+previousMonthButton.addEventListener("click", () => {
+	// setDateToShow(subMonths(new Date(datePicker.dataset.dateToShow!), 1).toDateString())
+	changeMonth(-1)
+	populateDatePicker()
+})
 // 4. Next Month Button: When clicked, repopulate the date picker with the next month.
+const nextMonthButton = datePicker.querySelector(
+	".next-month-button"
+) as HTMLButtonElement
+nextMonthButton.addEventListener("click", () => {
+	// setDateToShow(addMonths(new Date(datePicker.dataset.dateToShow!), 1).toDateString())
+	changeMonth(1)
+	populateDatePicker()
+})
 // 5. Date Buttons: When clicked, change the selected date to the date that was clicked and close the
-//      date picker. If the date was not in the current month, repopulate the date picker with the month
-//      of the selected date.
+//      date picker.
 const dateGrid = datePicker.querySelector(".date-picker-grid-dates") as HTMLDivElement
 function populateDateGrid(dateToShow: Date, selectedDate: Date) {
 	dateGrid.innerHTML = ""
@@ -92,8 +114,8 @@ function createDayButton(buttonDate: Date, selectedDate: Date, inCurrentMonth: b
 		if (e.target == null || (e.target as HTMLButtonElement) !== button) return
 		e.preventDefault()
 
-		setDatePickerToggleLabel(button.dataset.date!)
-		datePicker.dataset.selectedDate = button.dataset.date
+		updateDatePickerToggle(button.dataset.date!)
+		setDateToShow(button.dataset.date!)
 
 		datePicker.classList.remove("show")
 	})
