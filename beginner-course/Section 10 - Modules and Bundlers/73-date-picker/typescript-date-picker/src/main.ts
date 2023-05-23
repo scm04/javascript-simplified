@@ -12,7 +12,7 @@ import {
 
 // 1. On load: populate the date picker button with the current date.
 const datePickerToggle = document.querySelector(
-	".date-picker-button"
+	"[data-date-picker-toggle]"
 ) as HTMLButtonElement
 function updateDatePickerToggle(dateString: string) {
 	datePickerToggle.dataset.selectedDate = dateString
@@ -22,7 +22,7 @@ updateDatePickerToggle(new Date().toDateString())
 
 // 2. Date Picker Button: When clicked, toggle the visibility of the date picker
 //		and populate it if it is visible.
-const datePicker = document.querySelector(".date-picker") as HTMLDivElement
+const datePicker = document.querySelector("[data-date-picker]") as HTMLDivElement
 function setDateToShow(dateString: string) {
 	datePicker.dataset.dateToShow = startOfMonth(new Date(dateString)).toDateString()
 }
@@ -49,12 +49,11 @@ function populateDatePicker() {
 	populateDateGrid(dateToShow, selectedDate)
 }
 
-const currentMonth = datePicker.querySelector(".current-month") as HTMLDivElement
+const displayMonth = datePicker.querySelector("[data-display-month]") as HTMLButtonElement
+const displayYear = datePicker.querySelector("[data-display-year]") as HTMLButtonElement
 function updateCurrentMonth(dateToShow: Date) {
-	currentMonth.textContent = `${format(dateToShow, "LLLL")} - ${format(
-		dateToShow,
-		"y"
-	)}`
+	displayMonth.textContent = format(dateToShow, "LLLL")
+	displayYear.textContent = format(dateToShow, "y")
 }
 // 3. Previous Month Button: When clicked, repopulate the date picker with the previous month.
 function changeMonth(modifier: number) {
@@ -63,25 +62,25 @@ function changeMonth(modifier: number) {
 	)
 }
 const previousMonthButton = datePicker.querySelector(
-	".prev-month-button"
+	"[data-prev-month-button]"
 ) as HTMLButtonElement
 previousMonthButton.addEventListener("click", () => {
-	// setDateToShow(subMonths(new Date(datePicker.dataset.dateToShow!), 1).toDateString())
 	changeMonth(-1)
 	populateDatePicker()
 })
 // 4. Next Month Button: When clicked, repopulate the date picker with the next month.
 const nextMonthButton = datePicker.querySelector(
-	".next-month-button"
+	"[data-next-month-button]"
 ) as HTMLButtonElement
 nextMonthButton.addEventListener("click", () => {
-	// setDateToShow(addMonths(new Date(datePicker.dataset.dateToShow!), 1).toDateString())
 	changeMonth(1)
 	populateDatePicker()
 })
 // 5. Date Buttons: When clicked, change the selected date to the date that was clicked and close the
 //      date picker.
-const dateGrid = datePicker.querySelector(".date-picker-grid-dates") as HTMLDivElement
+const dateGrid = datePicker.querySelector(
+	"[data-date-picker-date-grid]"
+) as HTMLDivElement
 function populateDateGrid(dateToShow: Date, selectedDate: Date) {
 	dateGrid.innerHTML = ""
 	const start = startOfWeek(dateToShow)
@@ -106,6 +105,9 @@ function createDayButton(buttonDate: Date, selectedDate: Date, inCurrentMonth: b
 	if (!inCurrentMonth) {
 		button.classList.add("date-picker-other-month-date")
 	}
+	if (isEqual(buttonDate, startOfDay(new Date()))) {
+		button.classList.add("today")
+	}
 	if (isEqual(buttonDate, selectedDate)) {
 		button.classList.add("selected")
 	}
@@ -124,6 +126,10 @@ function createDayButton(buttonDate: Date, selectedDate: Date, inCurrentMonth: b
 }
 // 6. BONUS 1: If the month name is clicked, bring up a selector that allows the user to change the month.
 //      Choosing a month via the month selector does not change the year.
+// Next step: HTML for the month selector, then hook everything up correctly.
 // 7. BONUS 2: If the year is clicked, bring up a selector that allows the user to select a year, either by
 //      clicking on it in the list of choices or by typing it into the search field. There will be some
 //      limitations on this so that the user can't choose an invalid date, but those can be defined later.
+// 8. BONUS 3: Add styling to show today's date when it is visible, but not selected. When the date picker
+//		is first opened, use this styling to show today's date without selecting it.
+// 9. BONUS 4: Add a button that takes the user to today's date.
