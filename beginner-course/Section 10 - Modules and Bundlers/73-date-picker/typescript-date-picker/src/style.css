@@ -19,7 +19,7 @@ body {
 }
 
 .date-picker {
-  display: none;
+  display: block;
   position: absolute;
   margin-top: 1rem;
   top: 100%;
@@ -110,11 +110,29 @@ body {
   background-color:rgba(0, 0, 0, 0.07);
 }
 
-.date-picker.show {
-  display: block;
+.date.today {
+  background-color: hsl(0, 0%, 65%);
+  color: white;
 }
 
 .date.selected {
   background-color: hsl(200, 100%, 50%);
   color: white;
+}
+
+.month-selection-grid {
+  display: grid;
+  column-gap: 0.75rem;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-auto-rows: auto;
+  width: 100%;
+  height: 100%;
+}
+
+.month-selector-button {
+  padding-inline: 1.5rem;
+}
+
+.hide {
+  display: none;
 }

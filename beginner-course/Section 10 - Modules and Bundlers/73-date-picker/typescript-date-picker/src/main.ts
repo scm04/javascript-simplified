@@ -7,7 +7,8 @@ import {
 	eachDayOfInterval,
 	startOfDay,
 	isEqual,
-	addMonths
+	addMonths,
+	setMonth
 } from "date-fns"
 
 // 1. On load: populate the date picker button with the current date.
@@ -28,11 +29,11 @@ function setDateToShow(dateString: string) {
 }
 setDateToShow(datePickerToggle.dataset.selectedDate!)
 datePickerToggle.addEventListener("click", () => {
-	datePicker.classList.toggle("show")
-	if (datePicker.classList.contains("show")) {
-		populateDatePicker()
-	} else {
+	datePicker.classList.toggle("hide")
+	if (datePicker.classList.contains("hide")) {
 		setDateToShow(datePickerToggle.dataset.selectedDate!)
+	} else {
+		populateDatePicker()
 	}
 })
 
@@ -112,21 +113,48 @@ function createDayButton(buttonDate: Date, selectedDate: Date, inCurrentMonth: b
 		button.classList.add("selected")
 	}
 
-	button.addEventListener("click", e => {
-		if (e.target == null || (e.target as HTMLButtonElement) !== button) return
-		e.preventDefault()
-
+	button.addEventListener("click", () => {
 		updateDatePickerToggle(button.dataset.date!)
 		setDateToShow(button.dataset.date!)
 
-		datePicker.classList.remove("show")
+		datePicker.classList.add("hide")
 	})
 
 	return button
 }
 // 6. BONUS 1: If the month name is clicked, bring up a selector that allows the user to change the month.
 //      Choosing a month via the month selector does not change the year.
-// Next step: HTML for the month selector, then hook everything up correctly.
+const monthSelectionGrid = datePicker.querySelector(
+	"[data-month-selection-grid]"
+) as HTMLDivElement
+const datePickerCalendarHeader = datePicker.querySelector(
+	"[data-date-picker-grid-header]"
+) as HTMLDivElement
+function toggleMonthSelector() {
+	monthSelectionGrid.classList.toggle("hide")
+	const monthSelectionIsHidden = monthSelectionGrid.classList.contains("hide")
+	datePickerCalendarHeader.classList.toggle("hide", !monthSelectionIsHidden)
+	dateGrid.classList.toggle("hide", !monthSelectionIsHidden)
+	previousMonthButton.disabled = !monthSelectionIsHidden
+	nextMonthButton.disabled = !monthSelectionIsHidden
+}
+displayMonth.addEventListener("click", () => toggleMonthSelector())
+
+const monthSelectorButtons = Array.from(
+	datePicker.querySelectorAll("[data-month-selector-button]")
+) as Array<HTMLButtonElement>
+console.log(monthSelectorButtons)
+monthSelectorButtons.forEach(button => {
+	button.addEventListener("click", () => {
+		const month = Number(button.dataset.month)
+		const dateToShow = new Date(datePicker.dataset.dateToShow!)
+		const newDateToShow = setMonth(dateToShow, month)
+		setDateToShow(newDateToShow.toDateString())
+		updateCurrentMonth(newDateToShow)
+		populateDatePicker()
+		toggleMonthSelector()
+	})
+})
 // 7. BONUS 2: If the year is clicked, bring up a selector that allows the user to select a year, either by
 //      clicking on it in the list of choices or by typing it into the search field. There will be some
 //      limitations on this so that the user can't choose an invalid date, but those can be defined later.
