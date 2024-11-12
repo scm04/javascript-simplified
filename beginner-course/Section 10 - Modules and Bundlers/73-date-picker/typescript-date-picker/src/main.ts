@@ -132,22 +132,32 @@ const monthSelectionGrid = datePicker.querySelector(
 const datePickerCalendarHeader = datePicker.querySelector(
 	"[data-date-picker-grid-header]"
 ) as HTMLDivElement
-function toggleDatePickerGrid(hide: boolean) {
-	datePickerCalendarHeader.classList.toggle("hide", hide)
-	dateGrid.classList.toggle("hide", hide)
-}
-function toggleMonthButtons(disable: boolean) {
-	previousMonthButton.disabled = disable
-	nextMonthButton.disabled = disable
+function toggleDatePickerGrid(datePickerShouldBeHidden: boolean) {
+	datePickerCalendarHeader.classList.toggle("hide", datePickerShouldBeHidden)
+	dateGrid.classList.toggle("hide", datePickerShouldBeHidden)
+	previousMonthButton.disabled = datePickerShouldBeHidden
+	nextMonthButton.disabled = datePickerShouldBeHidden
 }
 function toggleMonthSelector() {
 	monthSelectionGrid.classList.toggle("hide")
-	const monthSelectionIsHidden = monthSelectionGrid.classList.contains("hide")
-	if (!monthSelectionIsHidden) yearSelector.classList.add("hide")
-	toggleDatePickerGrid(!monthSelectionIsHidden)
-	toggleMonthButtons(!monthSelectionIsHidden)
 }
-displayMonth.addEventListener("click", () => toggleMonthSelector())
+function monthSelectorIsHidden(): boolean {
+	return monthSelectionGrid.classList.contains("hide")
+}
+function toggleSelector(type: string) {
+	switch (type) {
+		case "month":
+			toggleMonthSelector()
+			if (!yearSelectorIsHidden()) toggleYearSelector()
+			break
+		case "year":
+			toggleYearSelector()
+			if (!monthSelectorIsHidden()) toggleMonthSelector()
+			break
+	}
+	toggleDatePickerGrid(!monthSelectorIsHidden() || !yearSelectorIsHidden())
+}
+displayMonth.addEventListener("click", () => toggleSelector("month"))
 
 const monthSelectorButtons = Array.from(
 	datePicker.querySelectorAll("[data-month-selector-button]")
@@ -173,15 +183,14 @@ monthSelectorButtons.forEach(button => {
 const yearSelector = datePicker.querySelector("[data-year-selector]") as HTMLDivElement
 function toggleYearSelector() {
 	yearSelector.classList.toggle("hide")
-	const yearSelectorIsHidden = yearSelector.classList.contains("hide")
-	if (!yearSelectorIsHidden) monthSelectionGrid.classList.add("hide")
-	toggleDatePickerGrid(!yearSelectorIsHidden)
-	toggleMonthButtons(!yearSelectorIsHidden)
-	setSelectedAndCurrentYears(yearSelectorIsHidden)
+	if (yearSelectorIsHidden()) return
+	setSelectedAndCurrentYears()
 }
-function setSelectedAndCurrentYears(yearSelectorIsHidden: boolean) {
-	if (yearSelectorIsHidden) return
-	const currentYear = getYear(new Date())
+function yearSelectorIsHidden(): boolean {
+	return yearSelector.classList.contains("hide")
+}
+function setSelectedAndCurrentYears() {
+	const currentYear = getYear(new Date(datePicker.dataset.dateToShow!))
 	const selectedYear = getYear(new Date(datePickerToggle.dataset.selectedDate!))
 	const yearButtons: HTMLButtonElement[] = Array.from(
 		yearSelector.querySelectorAll(".year-selector-button")
@@ -191,8 +200,12 @@ function setSelectedAndCurrentYears(yearSelectorIsHidden: boolean) {
 		yearButton.classList.toggle("current-year", year === currentYear)
 		yearButton.classList.toggle("selected-year", year === selectedYear)
 	}
+	const firstButton = yearButtons.find(button =>
+		button.classList.contains("current-year")
+	)
+	firstButton?.scrollIntoView({ behavior: "instant", block: "center" })
 }
-displayYear.addEventListener("click", () => toggleYearSelector())
+displayYear.addEventListener("click", () => toggleSelector("year"))
 const defaultYears = {
 	start: "1900",
 	end: "2100"
@@ -216,13 +229,12 @@ function createYearButton(year: number) {
 		setDateToShow(newDateToShow.toDateString())
 		updateDisplayMonthAndYear(newDateToShow)
 		populateDatePicker()
-		toggleYearSelector()
+		toggleSelector("year")
 	})
 
 	return button
 }
 // Tasks remaining for the year selector:
-// - When the selector is first opened, set the scroll position to selected year if one exists. Default to today's date if no date has been selected yet.
 // - Add an input above the list of years that does the following:
 //		- When the input changes, clear any errors and filter the visible year buttons to only show the ones that include the value currently in the input.
 //		- When enter is pressed validate the value. If it is valid, update dateToShow, clear the input, and close the year selector, otherwise, show an error.
