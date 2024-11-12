@@ -35,7 +35,7 @@ body {
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06), 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   background-color: white;
   width: var(--date-picker-width);
-  max-height: calc(var(--date-picker-width) + var(--date-picker-header-height));
+  max-height: var(--date-picker-width);
   overflow: hidden;
 }
 
@@ -145,7 +145,8 @@ body {
 }
 
 .year-selector {
-  max-height: var(--date-picker-width);
+  /* Remove the header height from the width so the date picker itself doesn't change size. */
+  max-height: calc(var(--date-picker-width) - var(--date-picker-header-height));
   overflow-y: scroll;
 }
 
