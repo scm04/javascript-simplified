@@ -127,7 +127,7 @@ function createDayButton(buttonDate: Date, selectedDate: Date, inCurrentMonth: b
 // 6. BONUS 1: If the month name is clicked, bring up a selector that allows the user to change the month.
 //      Choosing a month via the month selector does not change the year.
 const monthSelectionGrid = datePicker.querySelector(
-	"[data-month-selection-grid]"
+	"[data-month-selector-grid]"
 ) as HTMLDivElement
 const datePickerCalendarHeader = datePicker.querySelector(
 	"[data-date-picker-grid-header]"
@@ -181,6 +181,9 @@ monthSelectorButtons.forEach(button => {
 //		make this a completely enclosed reusable component, I should move the properties to the top-level
 //		element of the component, but that's the only change I would need to make from my current setup.
 const yearSelector = datePicker.querySelector("[data-year-selector]") as HTMLDivElement
+const yearSelectorGrid = yearSelector.querySelector(
+	"[data-year-selector-grid]"
+) as HTMLDivElement
 function toggleYearSelector() {
 	yearSelector.classList.toggle("hide")
 	if (yearSelectorIsHidden()) return
@@ -189,21 +192,28 @@ function toggleYearSelector() {
 function yearSelectorIsHidden(): boolean {
 	return yearSelector.classList.contains("hide")
 }
+// The term "current year" here refers to the year the user has chosen to display in the date picker,
+// not the current calendar year. For example, if it is currently November 2024, but the user has chosen
+// to look at October 1975, "current year" refers to 1975, not 2024. I couldn't think of a better name
+// to adequately convey the meaning, hence this explanation.
+// The term "selected year" refers to the year of the date that has been selected in the date picker
+// if the user has already selected a date. It defaults to the current calendar year because the date
+// picker defaults to the current date.
 function setSelectedAndCurrentYears() {
 	const currentYear = getYear(new Date(datePicker.dataset.dateToShow!))
 	const selectedYear = getYear(new Date(datePickerToggle.dataset.selectedDate!))
 	const yearButtons: HTMLButtonElement[] = Array.from(
-		yearSelector.querySelectorAll(".year-selector-button")
+		yearSelectorGrid.querySelectorAll(".year-selector-button")
 	)
 	for (const yearButton of yearButtons) {
 		const year = parseInt(yearButton.dataset.year!)
 		yearButton.classList.toggle("current-year", year === currentYear)
 		yearButton.classList.toggle("selected-year", year === selectedYear)
 	}
-	const firstButton = yearButtons.find(button =>
+	const currentYearButton = yearButtons.find(button =>
 		button.classList.contains("current-year")
 	)
-	firstButton?.scrollIntoView({ behavior: "instant", block: "center" })
+	currentYearButton?.scrollIntoView({ behavior: "instant", block: "center" })
 }
 displayYear.addEventListener("click", () => toggleSelector("year"))
 const defaultYears = {
@@ -214,7 +224,7 @@ const startYear = parseInt(yearSelector.dataset.startYear ?? defaultYears.start)
 const endYear = parseInt(yearSelector.dataset.endYear ?? defaultYears.end)
 for (let year = startYear; year <= endYear; year++) {
 	const button = createYearButton(year)
-	yearSelector.appendChild(button)
+	yearSelectorGrid.appendChild(button)
 }
 function createYearButton(year: number) {
 	const button: HTMLButtonElement = document.createElement("button")
@@ -242,4 +252,6 @@ function createYearButton(year: number) {
 
 // 8. BONUS 3: Add styling to show today's date when it is visible, but not selected. When the date picker
 //		is first opened, use this styling to show today's date without selecting it.
+//		NOTE: Styling is already in place, but today's date is currently selected by default when the component is loaded.
+//			  Is that what I want or do I want the component to do something else, such as displaying placeholder text (e.g. "Choose a date")?
 // 9. BONUS 4: Add a button that takes the user to today's date.

@@ -131,8 +131,8 @@ body {
   color: white;
 }
 
-.month-selection-grid,
-.year-selector {
+.month-selector-grid,
+.year-selector-grid {
   display: grid;
   column-gap: 0.5rem;
   grid-template-columns: repeat(3, 1fr);
@@ -147,26 +147,36 @@ body {
 .year-selector {
   /* Remove the header height from the width so the date picker itself doesn't change size. */
   max-height: calc(var(--date-picker-width) - var(--date-picker-header-height));
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+}
+
+.year-selector-grid {
   overflow-y: scroll;
 }
 
-.year-selector::-webkit-scrollbar {
+.year-selector-grid::-webkit-scrollbar {
   width: 10px;
 }
-.year-selector::-webkit-scrollbar-track {
+.year-selector-grid::-webkit-scrollbar-track {
   background: #ddd;
   border-radius: 1rem;
 }
-.year-selector::-webkit-scrollbar-thumb {
+.year-selector-grid::-webkit-scrollbar-thumb {
   background: #aaa;
   border-radius: 1rem;
 }
-.year-selector::-webkit-scrollbar-thumb:hover {
+.year-selector-grid::-webkit-scrollbar-thumb:hover {
   background: #777;
 }
 
 .year-selector-button {
   padding-inline: 1rem;
+}
+
+.year-selector-search {
+  place-self: center;
 }
 
 .hide {

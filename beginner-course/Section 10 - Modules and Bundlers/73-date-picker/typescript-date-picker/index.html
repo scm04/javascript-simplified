@@ -19,7 +19,7 @@
         </div>
         <button class="next-month-button month-button" data-next-month-button>&rarr;</button>
       </div>
-      <div class="month-selection-grid hide" data-month-selection-grid>
+      <div class="month-selector-grid hide" data-month-selector-grid>
         <button class="month-selector-button selector-button" data-month-selector-button data-month="0">Jan</button>
         <button class="month-selector-button selector-button" data-month-selector-button data-month="1">Feb</button>
         <button class="month-selector-button selector-button" data-month-selector-button data-month="2">Mar</button>
@@ -33,7 +33,13 @@
         <button class="month-selector-button selector-button" data-month-selector-button data-month="10">Nov</button>
         <button class="month-selector-button selector-button" data-month-selector-button data-month="11">Dec</button>
       </div>
-      <div class="year-selector hide" data-year-selector data-start-year="1900" data-end-year="2100"></div>
+      <div class="year-selector hide" data-year-selector data-start-year="1900" data-end-year="2100">
+        <div class="year-selector-search">
+          <label for="year-selector-search">Search: </label>
+          <input type="number" name="year-selector-search" id="year-selector-search" />
+        </div>
+        <div class="year-selector-grid" data-year-selector-grid></div>
+      </div>
       <div class="date-picker-grid-header date-picker-grid" data-date-picker-grid-header>
         <div>Sun</div>
         <div>Mon</div>
