@@ -155,6 +155,7 @@ function toggleSelector(type: string) {
 			if (!monthSelectorIsHidden()) toggleMonthSelector()
 			break
 	}
+	populateDatePicker()
 	toggleDatePickerGrid(!monthSelectorIsHidden() || !yearSelectorIsHidden())
 }
 displayMonth.addEventListener("click", () => toggleSelector("month"))
@@ -169,8 +170,7 @@ monthSelectorButtons.forEach(button => {
 		const newDateToShow = setMonth(dateToShow, month)
 		setDateToShow(newDateToShow.toDateString())
 		updateDisplayMonthAndYear(newDateToShow)
-		populateDatePicker()
-		toggleMonthSelector()
+		toggleSelector("month")
 	})
 })
 // 7. BONUS 2: If the year is clicked, bring up a selector that allows the user to select a year, either by
@@ -188,6 +188,7 @@ function toggleYearSelector() {
 	yearSelector.classList.toggle("hide")
 	if (yearSelectorIsHidden()) return
 	setSelectedAndCurrentYears()
+	yearSelectorSearch.focus()
 }
 function yearSelectorIsHidden(): boolean {
 	return yearSelector.classList.contains("hide")
@@ -199,12 +200,15 @@ function yearSelectorIsHidden(): boolean {
 // The term "selected year" refers to the year of the date that has been selected in the date picker
 // if the user has already selected a date. It defaults to the current calendar year because the date
 // picker defaults to the current date.
+function getYearButtons() {
+	return Array.from(
+		yearSelectorGrid.querySelectorAll(".year-selector-button")
+	) as HTMLButtonElement[]
+}
 function setSelectedAndCurrentYears() {
 	const currentYear = getYear(new Date(datePicker.dataset.dateToShow!))
 	const selectedYear = getYear(new Date(datePickerToggle.dataset.selectedDate!))
-	const yearButtons: HTMLButtonElement[] = Array.from(
-		yearSelectorGrid.querySelectorAll(".year-selector-button")
-	)
+	const yearButtons = getYearButtons()
 	for (const yearButton of yearButtons) {
 		const year = parseInt(yearButton.dataset.year!)
 		yearButton.classList.toggle("current-year", year === currentYear)
@@ -234,24 +238,70 @@ function createYearButton(year: number) {
 
 	button.addEventListener("click", () => {
 		const year = parseInt(button.dataset.year!)
-		const dateToShow = new Date(datePicker.dataset.dateToShow!)
-		const newDateToShow = setYear(dateToShow, year)
-		setDateToShow(newDateToShow.toDateString())
-		updateDisplayMonthAndYear(newDateToShow)
-		populateDatePicker()
-		toggleSelector("year")
+		updateYear(year)
 	})
 
 	return button
+}
+function resetYearSelector() {
+	yearSelectorSearch.value = ""
+	const yearButtons = getYearButtons()
+	for (let year of yearButtons) {
+		year.classList.toggle("hide", false)
+	}
+}
+function updateYear(year: number) {
+	resetYearSelector()
+	const dateToShow = new Date(datePicker.dataset.dateToShow!)
+	const newDateToShow = setYear(dateToShow, year)
+	setDateToShow(newDateToShow.toDateString())
+	updateDisplayMonthAndYear(newDateToShow)
+	toggleSelector("year")
 }
 // Tasks remaining for the year selector:
 // - Add an input above the list of years that does the following:
 //		- When the input changes, clear any errors and filter the visible year buttons to only show the ones that include the value currently in the input.
 //		- When enter is pressed validate the value. If it is valid, update dateToShow, clear the input, and close the year selector, otherwise, show an error.
 //		- When a year button is clicked, clear the input.
+const yearSelectorSearch = yearSelector.querySelector(
+	"#year-selector-search"
+) as HTMLInputElement
+yearSelectorSearch.placeholder = "Enter a year..."
+const yearSelectorNoMatchesMessage = yearSelector.querySelector(
+	"[data-year-selector-no-matches-message]"
+) as HTMLDivElement
+yearSelectorSearch.addEventListener("input", () => {
+	const value = yearSelectorSearch.value
+	const yearButtons = getYearButtons()
+	let numberOfButtonsHidden = 0
+	for (let year of yearButtons) {
+		const shouldHide = !String(year.dataset.year!).startsWith(value)
+		year.classList.toggle("hide", shouldHide)
+		if (shouldHide) numberOfButtonsHidden++
+	}
+	yearSelectorNoMatchesMessage.classList.toggle(
+		"hide",
+		numberOfButtonsHidden !== yearButtons.length
+	)
+})
+yearSelectorSearch.addEventListener("keyup", e => {
+	if (e.key !== "Enter") return
+	const value = yearSelectorSearch.value
+	const validLength =
+		String(startYear).length <= value.length && value.length <= String(endYear).length
+	if (!validLength) return
+	const year = parseInt(value)
+	const validYear = startYear <= year && year <= endYear
+	if (!validYear) return
+	updateYear(parseInt(value))
+})
 
 // 8. BONUS 3: Add styling to show today's date when it is visible, but not selected. When the date picker
 //		is first opened, use this styling to show today's date without selecting it.
 //		NOTE: Styling is already in place, but today's date is currently selected by default when the component is loaded.
 //			  Is that what I want or do I want the component to do something else, such as displaying placeholder text (e.g. "Choose a date")?
-// 9. BONUS 4: Add a button that takes the user to today's date.
+// 9. BONUS 4: Add a button that takes the user to today's date. This button should only be visible when today's date is not visible.
+// 10. BONUS 5: Add a button that takes the user to the selected date. This button should only be visible when the selected date is not visible.
+//		What is the intended behavior if both today's date and the selected date are not visible? Should only one button be visible? Should both?
+//		Rather than hiding the buttons, should they always be visible and merely be disabled when their respective date is visible? (I kind of
+//		like the last idea the best and am leaning toward changing my original idea.)
