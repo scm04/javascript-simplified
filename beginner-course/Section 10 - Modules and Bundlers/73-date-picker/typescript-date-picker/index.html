@@ -13,11 +13,18 @@
     <button class="date-picker-button" data-date-picker-toggle>October 26th, 2020</button>
     <div class="date-picker hide" data-date-picker>
       <div class="date-picker-header">
-        <button class="prev-month-button month-button" data-prev-month-button>&larr;</button>
-        <div class="current-month"><button class="selector-button" data-display-month>October</button> -
-          <button class="selector-button" data-display-year>2020</button>
+        <div class="date-picker-header-label-and-month-buttons">
+          <button class="prev-month-button month-button" data-prev-month-button>&larr;</button>
+          <div class="current-month"><button class="selector-button" data-display-month>October</button> -
+            <button class="selector-button" data-display-year>2020</button>
+          </div>
+          <button class="next-month-button month-button" data-next-month-button>&rarr;</button>
         </div>
-        <button class="next-month-button month-button" data-next-month-button>&rarr;</button>
+        <div class="date-picker-shortcuts">
+          <button class="go-to-today" title="Go to today's date" data-go-to-today-button>Today</button>
+          <button class="go-to-selected-date" title="Go to the selected date" data-go-to-selected-date-button>Selected
+            Date</button>
+        </div>
       </div>
       <div class="month-selector-grid hide" data-month-selector-grid>
         <button class="month-selector-button selector-button" data-month-selector-button data-month="0">Jan</button>
@@ -36,7 +43,7 @@
       <div class="year-selector hide" data-year-selector data-start-year="1900" data-end-year="2100">
         <div class="year-selector-search">
           <label for="year-selector-search">Search: </label>
-          <input type="number" name="year-selector-search" id="year-selector-search" />
+          <input type="number" name="year-selector-search" id="year-selector-search" placeholder="Enter a year..." />
         </div>
         <div class="year-selector-grid" data-year-selector-grid></div>
         <div class="hide" data-year-selector-no-matches-message>No matches were found.</div>

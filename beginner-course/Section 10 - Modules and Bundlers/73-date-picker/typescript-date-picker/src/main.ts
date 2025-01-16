@@ -266,7 +266,6 @@ function updateYear(year: number) {
 const yearSelectorSearch = yearSelector.querySelector(
 	"#year-selector-search"
 ) as HTMLInputElement
-yearSelectorSearch.placeholder = "Enter a year..."
 const yearSelectorNoMatchesMessage = yearSelector.querySelector(
 	"[data-year-selector-no-matches-message]"
 ) as HTMLDivElement
@@ -296,12 +295,10 @@ yearSelectorSearch.addEventListener("keyup", e => {
 	updateYear(parseInt(value))
 })
 
-// 8. BONUS 3: Add styling to show today's date when it is visible, but not selected. When the date picker
-//		is first opened, use this styling to show today's date without selecting it.
-//		NOTE: Styling is already in place, but today's date is currently selected by default when the component is loaded.
-//			  Is that what I want or do I want the component to do something else, such as displaying placeholder text (e.g. "Choose a date")?
-// 9. BONUS 4: Add a button that takes the user to today's date. This button should only be visible when today's date is not visible.
-// 10. BONUS 5: Add a button that takes the user to the selected date. This button should only be visible when the selected date is not visible.
-//		What is the intended behavior if both today's date and the selected date are not visible? Should only one button be visible? Should both?
-//		Rather than hiding the buttons, should they always be visible and merely be disabled when their respective date is visible? (I kind of
-//		like the last idea the best and am leaning toward changing my original idea.)
+// 8. BONUS 3: Add styling to show today's date when it is visible, but not selected. UPDATE: this is done.
+// 9. BONUS 4: Add a button that takes the user to today's date. It should be disabled when today's date is not visible.
+const goToTodayButton = datePicker.querySelector(
+	"[data-go-to-today-button]"
+) as HTMLButtonElement
+// TODO: Fix the styling of the component and finish implementing the two "go-to" buttons.
+// 10. BONUS 5: Add a button that takes the user to the selected date. It should be disabled when the selected date is not visible.
