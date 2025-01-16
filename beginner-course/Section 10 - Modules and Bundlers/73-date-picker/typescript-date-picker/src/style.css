@@ -27,7 +27,7 @@ body {
 		var(--number-of-calendar-columns) * var(--calendar-column-width) +
 			(var(--number-of-calendar-columns) - 1) * var(--calendar-grid-gap)
 	);
-	--date-picker-header-height: 3rem;
+	--date-picker-header-height: 4rem;
 	display: block;
 	position: absolute;
 	margin-top: 1rem;
@@ -41,17 +41,17 @@ body {
 		0 10px 10px -5px rgba(0, 0, 0, 0.04);
 	background-color: white;
 	width: var(--date-picker-width);
-	max-height: var(--date-picker-width);
+	max-height: calc(var(--date-picker-width) * 1.125);
 	overflow: hidden;
 }
 
-/* Fix the styling for the date picker header so that the new buttons are accounted for when calculating the total height of the component.
-The current .date-picker-header class can mostly be popped onto the row that has the old header (the row with the label and the arrows to
-change the month). The height needs tweaking, but I'm not sure exactly how, because it needs to work with the max-height in the .date-picker
-class so that nothing is overflowing the container in the default view. */
-
 .date-picker-header {
-	height: var(--date-picker-header-height);
+	max-height: var(--date-picker-header-height);
+	display: grid;
+	gap: 0.25rem;
+}
+
+.date-picker-header-label-and-month-buttons {
 	display: flex;
 	justify-content: space-between;
 	font-weight: bold;

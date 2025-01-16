@@ -156,7 +156,10 @@ function toggleSelector(type: string) {
 			break
 	}
 	populateDatePicker()
-	toggleDatePickerGrid(!monthSelectorIsHidden() || !yearSelectorIsHidden())
+	const monthOrYearSelectorIsVisible =
+		!monthSelectorIsHidden() || !yearSelectorIsHidden()
+	toggleDatePickerGrid(monthOrYearSelectorIsVisible)
+	toggleShortcutButtons(monthOrYearSelectorIsVisible)
 }
 displayMonth.addEventListener("click", () => toggleSelector("month"))
 
@@ -297,8 +300,22 @@ yearSelectorSearch.addEventListener("keyup", e => {
 
 // 8. BONUS 3: Add styling to show today's date when it is visible, but not selected. UPDATE: this is done.
 // 9. BONUS 4: Add a button that takes the user to today's date. It should be disabled when today's date is not visible.
-const goToTodayButton = datePicker.querySelector(
+const shortcutButtons = datePicker.querySelector(
+	"[data-shortcut-buttons]"
+) as HTMLDivElement
+function toggleShortcutButtons(shouldBeHidden: boolean) {
+	shortcutButtons.classList.toggle("hide", shouldBeHidden)
+}
+// This needs to be called any time the month or year changes, and any time a new date is selected.
+function updateShortcutButtons() {
+	// if today's date is visible (month and year match today's date), disable goToTodayButton
+	// if the selected date is visible (month and year match selected date), disable goToSelectedDateButton
+}
+const goToTodayButton = shortcutButtons.querySelector(
 	"[data-go-to-today-button]"
 ) as HTMLButtonElement
 // TODO: Fix the styling of the component and finish implementing the two "go-to" buttons.
 // 10. BONUS 5: Add a button that takes the user to the selected date. It should be disabled when the selected date is not visible.
+const goToSelectedDateButton = shortcutButtons.querySelector(
+	"[data-go-to-selected-date-button]"
+) as HTMLButtonElement
