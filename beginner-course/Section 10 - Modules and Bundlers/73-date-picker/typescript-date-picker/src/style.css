@@ -41,7 +41,7 @@ body {
 		0 10px 10px -5px rgba(0, 0, 0, 0.04);
 	background-color: white;
 	width: var(--date-picker-width);
-	max-height: calc(var(--date-picker-width) * 1.125);
+	max-height: calc(var(--date-picker-width) * 1.25);
 	overflow: hidden;
 }
 

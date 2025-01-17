@@ -6,11 +6,12 @@ import {
 	endOfMonth,
 	eachDayOfInterval,
 	startOfDay,
-	isEqual,
 	addMonths,
 	setMonth,
 	setYear,
-	getYear
+	getYear,
+	isSameMonth,
+	isSameDay
 } from "date-fns"
 
 // 1. On load: populate the date picker button with the current date.
@@ -50,6 +51,7 @@ function populateDatePicker() {
 
 	updateDisplayMonthAndYear(dateToShow)
 	populateDateGrid(dateToShow, selectedDate)
+	updateShortcutButtons()
 }
 
 const displayMonth = datePicker.querySelector("[data-display-month]") as HTMLButtonElement
@@ -90,11 +92,7 @@ function populateDateGrid(dateToShow: Date, selectedDate: Date) {
 	const end = endOfWeek(endOfMonth(dateToShow))
 	const interval = eachDayOfInterval({ start, end })
 	interval.forEach(day => {
-		const button = createDayButton(
-			day,
-			selectedDate,
-			day.getMonth() === dateToShow!.getMonth()
-		)
+		const button = createDayButton(day, selectedDate, isSameMonth(day, dateToShow!))
 		dateGrid.appendChild(button)
 	})
 }
@@ -108,10 +106,10 @@ function createDayButton(buttonDate: Date, selectedDate: Date, inCurrentMonth: b
 	if (!inCurrentMonth) {
 		button.classList.add("date-picker-other-month-date")
 	}
-	if (isEqual(buttonDate, startOfDay(new Date()))) {
+	if (isSameDay(buttonDate, new Date())) {
 		button.classList.add("today")
 	}
-	if (isEqual(buttonDate, selectedDate)) {
+	if (isSameDay(buttonDate, selectedDate)) {
 		button.classList.add("selected")
 	}
 
@@ -144,6 +142,13 @@ function toggleMonthSelector() {
 function monthSelectorIsHidden(): boolean {
 	return monthSelectionGrid.classList.contains("hide")
 }
+function updateDatePicker() {
+	populateDatePicker()
+	const monthOrYearSelectorIsVisible =
+		!monthSelectorIsHidden() || !yearSelectorIsHidden()
+	toggleDatePickerGrid(monthOrYearSelectorIsVisible)
+	toggleShortcutButtons(monthOrYearSelectorIsVisible)
+}
 function toggleSelector(type: string) {
 	switch (type) {
 		case "month":
@@ -155,11 +160,7 @@ function toggleSelector(type: string) {
 			if (!monthSelectorIsHidden()) toggleMonthSelector()
 			break
 	}
-	populateDatePicker()
-	const monthOrYearSelectorIsVisible =
-		!monthSelectorIsHidden() || !yearSelectorIsHidden()
-	toggleDatePickerGrid(monthOrYearSelectorIsVisible)
-	toggleShortcutButtons(monthOrYearSelectorIsVisible)
+	updateDatePicker()
 }
 displayMonth.addEventListener("click", () => toggleSelector("month"))
 
@@ -261,11 +262,6 @@ function updateYear(year: number) {
 	updateDisplayMonthAndYear(newDateToShow)
 	toggleSelector("year")
 }
-// Tasks remaining for the year selector:
-// - Add an input above the list of years that does the following:
-//		- When the input changes, clear any errors and filter the visible year buttons to only show the ones that include the value currently in the input.
-//		- When enter is pressed validate the value. If it is valid, update dateToShow, clear the input, and close the year selector, otherwise, show an error.
-//		- When a year button is clicked, clear the input.
 const yearSelectorSearch = yearSelector.querySelector(
 	"#year-selector-search"
 ) as HTMLInputElement
@@ -306,16 +302,30 @@ const shortcutButtons = datePicker.querySelector(
 function toggleShortcutButtons(shouldBeHidden: boolean) {
 	shortcutButtons.classList.toggle("hide", shouldBeHidden)
 }
-// This needs to be called any time the month or year changes, and any time a new date is selected.
 function updateShortcutButtons() {
-	// if today's date is visible (month and year match today's date), disable goToTodayButton
-	// if the selected date is visible (month and year match selected date), disable goToSelectedDateButton
+	const dateShown = new Date(datePicker.dataset.dateToShow!)
+
+	const todayIsVisible = isSameMonth(new Date(), dateShown)
+	goToTodayButton.disabled = todayIsVisible
+
+	const selectedDateIsVisible = isSameMonth(
+		new Date(datePickerToggle.dataset.selectedDate!),
+		dateShown
+	)
+	goToSelectedDateButton.disabled = selectedDateIsVisible
 }
 const goToTodayButton = shortcutButtons.querySelector(
 	"[data-go-to-today-button]"
 ) as HTMLButtonElement
-// TODO: Fix the styling of the component and finish implementing the two "go-to" buttons.
+goToTodayButton.addEventListener("click", () => {
+	setDateToShow(new Date().toDateString())
+	updateDatePicker()
+})
 // 10. BONUS 5: Add a button that takes the user to the selected date. It should be disabled when the selected date is not visible.
 const goToSelectedDateButton = shortcutButtons.querySelector(
 	"[data-go-to-selected-date-button]"
 ) as HTMLButtonElement
+goToSelectedDateButton.addEventListener("click", () => {
+	setDateToShow(datePickerToggle.dataset.selectedDate!)
+	updateDatePicker()
+})
