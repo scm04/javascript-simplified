@@ -6,6 +6,19 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
   <script type="module" src="src/store.ts"></script>
+  <style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type=number] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+  </style>
   <title>Store</title>
 </head>
 <body>
@@ -23,12 +36,39 @@
       <div class="flex flex-wrap -m-4" data-item-list>
       </div>
     </div>
+    <template data-store-item>
+      <div class="lg:w-1/4 md:w-1/2 p-4 w-full">
+        <div class="block relative h-48 rounded overflow-hidden">
+          <img src="https://dummyimage.com/420x260" alt="ecommerce"
+            class="object-cover object-center w-full h-full block" data-image>
+        </div>
+        <div class="mt-3 grid grid-cols-2 items-end justify-items-start">
+          <div>
+            <h3 class="text-gray-500 text-xs tracking-widest title-font uppercase mb-1" data-category></h3>
+            <h2 class="text-gray-900 title-font text-lg font-medium" data-name></h2>
+            <p class="mt-1" data-price></p>
+          </div>
+          <div>
+            <div class="grid grid-cols-5 mb-1 text-xl">
+              <button class="py-1 bg-gray-300 rounded-l hover:bg-gray-400 select-none"
+                data-reduce-quantity-button>-</button>
+              <input type="number" value="1" class="px-2 border-2 border-gray-300 col-span-3 text-center"
+                data-quantity-input />
+              <button class="py-1 bg-gray-300 rounded-r hover:bg-gray-400 select-none"
+                data-increase-quantity-button>+</button>
+            </div>
+            <button class="text-white py-2 px-4 text-xl bg-blue-500 rounded hover:bg-blue-700 w-full select-none"
+              data-add-to-cart-button>Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </template>
   </section>
   <section data-cart>
-    <div class="mb-4 top-0 right-0 mr-4 mt-20 fixed">
+    <div class="mb-4 top-0 right-0 mr-4 mt-20 fixed" data-cart-details>
       <div style="max-height: calc(100vh - 6rem)"
         class="bg-white text-gray-700 body-font shadow-lg border rounded-lg flex flex-col">
-        <div class="overflow-y-auto px-4 pt-4">
+        <div class="overflow-y-auto px-4 pt-4" data-cart-item-list>
           <div class="mb-6">
             <div class="block relative h-24 rounded overflow-hidden">
               <img src="https://dummyimage.com/210x130/F00/F00" alt="ecommerce"
@@ -69,32 +109,37 @@
         </div>
       </div>
     </div>
-    <button class="fixed top-0 right-0 mr-4 mt-4 w-12 bg-blue-500 p-2 rounded-full text-white hover:bg-blue-700">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <button class="fixed top-0 right-0 mr-4 mt-4 w-12 bg-blue-500 p-2 rounded-full text-white hover:bg-blue-700"
+      data-cart-toggle-button>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        data-cart-with-items-svg>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
       </svg>
       <div
         class="bg-red-500 rounded-full text-xs absolute w-6 h-6 flex justify-center items-center right-0 bottom-0 transform translate-x-2 translate-y-2">
         2</div>
     </button>
-  </section>
-  <template data-store-item>
-    <div class="lg:w-1/4 md:w-1/2 p-4 w-full">
-      <div class="block relative h-48 rounded overflow-hidden">
-        <img src="https://dummyimage.com/420x260" alt="ecommerce" class="object-cover object-center w-full h-full block"
-          data-image>
-      </div>
-      <div class="mt-4 flex items-end justify-between">
-        <div>
-          <h3 class="text-gray-500 text-xs tracking-widest title-font uppercase mb-1" data-category></h3>
-          <h2 class="text-gray-900 title-font text-lg font-medium" data-name></h2>
-          <p class="mt-1" data-price></p>
+    <template data-cart-item-template>
+      <div class="mb-6">
+        <div class="block relative h-24 rounded overflow-hidden">
+          <img src="https://dummyimage.com/210x130/F00/F00" alt="ecommerce"
+            class="object-cover object-center w-full h-full block rounded">
+          <button data-remove-from-cart-button
+            class="absolute top-0 right-0 bg-black rounded-tr text-white w-6 h-6 text-lg flex justify-center items-center">&times;</button>
         </div>
-        <button class="text-white py-2 px-4 text-xl bg-blue-500 rounded hover:bg-blue-700" data-add-to-cart-button>Add
-          to Cart</button>
+        <div class="mt-2 flex justify-between">
+          <div class="flex items-center title-font">
+            <h2 class="text-gray-900 text-lg font-medium">
+              Red
+            </h2>
+            <span class="text-gray-600 text-sm font-bold ml-1">x2</span>
+          </div>
+          <div>$32.00</div>
+        </div>
       </div>
-    </div>
-  </template>
+    </template>
+  </section>
 </body>
 </html>
