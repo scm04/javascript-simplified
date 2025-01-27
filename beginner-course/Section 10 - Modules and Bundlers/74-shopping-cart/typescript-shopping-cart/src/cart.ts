@@ -3,11 +3,12 @@ import formatCurrency from "./utilities.ts"
 
 // Persist using Session Storage or Local Storage
 // NOTE: Maps can't be serialized directly, so I need to convert it to an Array before serializing and saving. When deserializing, I can put the resulting Array directly into the Map constructor and it will give me the correct map.
-// TODO: Decide whether to use localStorage or sessionStorage. localStorage persists across browsing sessions, sessionStorage only lasts until the site is closed. I know Kyle used sessionStorage, but I'm on the fence. I feel like most real-world shopping cart applications (like Amazon) probably use something more like localStorage (though, in reality, they probably just have some server storage somewhere that persists your cart across all browsers and apps that you are signed in to).
+// TODO: Decide whether to use localStorage or sessionStorage. localStorage persists across browsing sessions, sessionStorage only lasts until the site is closed. I know Kyle used sessionStorage, but I'm on the fence. I feel like most real-world shopping cart applications (like Amazon) probably use something more like localStorage (though, in reality, they probably just have server storage somewhere that persists your cart across all browsers and apps that you are signed in to).
 // 1. Load the cart from storage whenever the cart is rendered.
 // 2. Whenever the cart is updated, save it to storage.
 // 3. Whenever the cart details are toggled, update the state in storage.
-// 4. When something requests to render the cart, check in storage to see whether the details should be visible or not.
+// 4. Whenever the compact view is toggled, update the state in storage.
+// 5. When something requests to render the cart, check in storage to see whether the details should be visible or not. If the details should be visible, check whether or not the compact view should be used.
 type CartItemID = number
 type CartItemQuantity = number
 let cart: Map<CartItemID, CartItemQuantity> = new Map([
@@ -28,14 +29,16 @@ function removeFromCart(id: number) {
 
 // Cart Button:
 // (DONE) 1. When clicked, toggle whether the cart contents are visible.
-// 2. When empty, hide the number bubble, disable the button, and change the SVG color to gray.
+// (DONE) 2. When empty, hide the number bubble, disable the button, and change the SVG color to gray.
 const cartElement = document.querySelector("[data-cart]") as HTMLElement
 const cartToggleButton = cartElement.querySelector(
 	"[data-cart-toggle-button]"
 ) as HTMLButtonElement
 const cartDetails = cartElement.querySelector("[data-cart-details]") as HTMLDivElement
+let cartDetailsHidden = false
 cartToggleButton.addEventListener("click", () => {
-	cartDetails.classList.toggle("invisible")
+	cartDetailsHidden = !cartDetailsHidden
+	renderCart()
 })
 
 // Cart Details
@@ -43,15 +46,51 @@ cartToggleButton.addEventListener("click", () => {
 // (DONE) 2. If the cart details are shown, rerender the items that are in the cart and update the total price whenever the cart is rendered.
 // BONUS: Add a button to clear all contents from the cart.
 // BONUS: Add a "compact" view to the cart that makes each cart item into one row. Add a toggle at the top to turn the "compact" view on and off.
+const cartTotalItems = cartToggleButton.querySelector(
+	"[data-total-cart-items]"
+) as HTMLDivElement
 const cartItemList = cartDetails.querySelector("[data-cart-item-list]") as HTMLDivElement
 const cartTotalPrice = cartDetails.querySelector(
 	"[data-cart-total-price]"
 ) as HTMLSpanElement
-const cartTotalItems = cartToggleButton.querySelector(
-	"[data-total-cart-items]"
-) as HTMLDivElement
+// Compact view
+let useCompactView = false
+const compactViewButton = cartDetails.querySelector(
+	"[data-compact-view-button]"
+) as HTMLButtonElement
+const compactViewOffSVG = compactViewButton.querySelector(
+	"[data-compact-view-off]"
+) as SVGElement
+const compactViewOnSVG = compactViewButton.querySelector(
+	"[data-compact-view-on]"
+) as SVGElement
+compactViewButton.addEventListener("click", () => {
+	useCompactView = !useCompactView
+	compactViewOnSVG.classList.toggle("hidden", !useCompactView)
+	compactViewOffSVG.classList.toggle("hidden", useCompactView)
+	renderCart()
+})
+// Clear cart
+const clearCartButton = cartDetails.querySelector(
+	"[data-clear-cart-button]"
+) as HTMLButtonElement
+clearCartButton.addEventListener("click", () => {
+	cart.clear()
+	renderCart()
+})
+
 function renderCart() {
+	if (cart.size === 0) {
+		cartDetails.classList.add("invisible")
+		cartTotalItems.classList.add("invisible")
+		cartToggleButton.disabled = true
+		return
+	}
+
 	cartItemList.innerHTML = ""
+	cartDetails.classList.toggle("invisible", cartDetailsHidden)
+	cartTotalItems.classList.remove("invisible")
+	cartToggleButton.disabled = false
 	let totalPrice = 0
 	let totalItems = 0
 	for (let [id, quantity] of cart) {
@@ -76,11 +115,13 @@ function renderCart() {
 // (DONE) 4. Set the item's quantity. If the quantity is one, hide the quantity span.
 // (DONE) 5. Set the price.
 // TODO: Once I'm done implementing everything, the cart contents should be hidden by default.
-const cartItemTemplate = cartElement.querySelector(
-	"[data-cart-item-template]"
+const fullCartItemTemplate = cartElement.querySelector(
+	"[data-full-cart-item-template]"
 ) as HTMLTemplateElement
+// query for the compact item template here
 function renderCartItem(item: Item, quantity: CartItemQuantity) {
-	const cartItemElement = cartItemTemplate.content.cloneNode(true) as HTMLDivElement
+	// once the compact item template is complete, this should decide which template to use based on useCompactView
+	const cartItemElement = fullCartItemTemplate.content.cloneNode(true) as HTMLDivElement
 
 	const image = cartItemElement.querySelector(
 		"[data-cart-item-image]"
