@@ -13,7 +13,8 @@ type CartItemID = number
 type CartItemQuantity = number
 let cart: Map<CartItemID, CartItemQuantity> = new Map([
 	[1, 2],
-	[3, 1]
+	[3, 1],
+	[7, 100]
 ])
 
 export function addToCart(id: number, quantity: number = 1) {
@@ -44,8 +45,8 @@ cartToggleButton.addEventListener("click", () => {
 // Cart Details
 // (DONE) 1. When the cart is rendered, update the number of items on the icon.
 // (DONE) 2. If the cart details are shown, rerender the items that are in the cart and update the total price whenever the cart is rendered.
-// BONUS: Add a button to clear all contents from the cart.
-// BONUS: Add a "compact" view to the cart that makes each cart item into one row. Add a toggle at the top to turn the "compact" view on and off.
+// (DONE) BONUS: Add a button to clear all contents from the cart.
+// (DONE) BONUS: Add a "compact" view to the cart that makes each cart item into one row. Add a toggle at the top to turn the "compact" view on and off.
 const cartTotalItems = cartToggleButton.querySelector(
 	"[data-total-cart-items]"
 ) as HTMLDivElement
@@ -66,8 +67,6 @@ const compactViewOnSVG = compactViewButton.querySelector(
 ) as SVGElement
 compactViewButton.addEventListener("click", () => {
 	useCompactView = !useCompactView
-	compactViewOnSVG.classList.toggle("hidden", !useCompactView)
-	compactViewOffSVG.classList.toggle("hidden", useCompactView)
 	renderCart()
 })
 // Clear cart
@@ -79,6 +78,9 @@ clearCartButton.addEventListener("click", () => {
 	renderCart()
 })
 
+// TODO: refactor; this is getting unwieldy and difficult to read
+// TODO: conditionally render the cart details based on whether or not they are visible
+// NOTE: If the cart details are hidden but there are items in the cart, I still need to know how many items are in the cart so I can update the item total. Everything else can be skipped.
 function renderCart() {
 	if (cart.size === 0) {
 		cartDetails.classList.add("invisible")
@@ -90,6 +92,8 @@ function renderCart() {
 	cartItemList.innerHTML = ""
 	cartDetails.classList.toggle("invisible", cartDetailsHidden)
 	cartTotalItems.classList.remove("invisible")
+	compactViewOnSVG.classList.toggle("hidden", !useCompactView)
+	compactViewOffSVG.classList.toggle("hidden", useCompactView)
 	cartToggleButton.disabled = false
 	let totalPrice = 0
 	let totalItems = 0
@@ -118,10 +122,14 @@ function renderCart() {
 const fullCartItemTemplate = cartElement.querySelector(
 	"[data-full-cart-item-template]"
 ) as HTMLTemplateElement
-// query for the compact item template here
+const compactCartItemTemplate = cartElement.querySelector(
+	"[data-compact-cart-item-template]"
+) as HTMLTemplateElement
 function renderCartItem(item: Item, quantity: CartItemQuantity) {
 	// once the compact item template is complete, this should decide which template to use based on useCompactView
-	const cartItemElement = fullCartItemTemplate.content.cloneNode(true) as HTMLDivElement
+	const cartItemElement = (
+		useCompactView ? compactCartItemTemplate : fullCartItemTemplate
+	).content.cloneNode(true) as HTMLDivElement
 
 	const image = cartItemElement.querySelector(
 		"[data-cart-item-image]"
