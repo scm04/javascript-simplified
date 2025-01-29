@@ -2,13 +2,24 @@ import { getItem, Item } from "./items.ts"
 import formatCurrency from "./utilities.ts"
 
 // Persist using Session Storage or Local Storage
-// NOTE: Maps can't be serialized directly, so I need to convert it to an Array before serializing and saving. When deserializing, I can put the resulting Array directly into the Map constructor and it will give me the correct map.
-// TODO: Decide whether to use localStorage or sessionStorage. localStorage persists across browsing sessions, sessionStorage only lasts until the site is closed. I know Kyle used sessionStorage, but I'm on the fence. I feel like most real-world shopping cart applications (like Amazon) probably use something more like localStorage (though, in reality, they probably just have server storage somewhere that persists your cart across all browsers and apps that you are signed in to).
-// 1. Load the cart from storage whenever the cart is rendered.
-// 2. Whenever the cart is updated, save it to storage.
-// 3. Whenever the cart details are toggled, update the state in storage.
-// 4. Whenever the compact view is toggled, update the state in storage.
-// 5. When something requests to render the cart, check in storage to see whether the details should be visible or not. If the details should be visible, check whether or not the compact view should be used.
+// 1. Whenever the cart is updated, save it to storage.
+// 2. Whenever the cart details are toggled, update the state in storage.
+// 3. Whenever the compact view is toggled, update the state in storage.
+// 4. Whenever the cart is rendered, load the above items from storage and apply them as appropriate in the rendering process.
+const STORAGE_KEY_CART = "ShoppingCart"
+const STORAGE_KEY_CART_DETAILS = `${STORAGE_KEY_CART}HideDetails`
+const STORAGE_KEY_COMPACT_VIEW = `${STORAGE_KEY_CART}UseCompactView`
+const EMPTY_CART_JSON = "[]"
+function saveCart() {
+	localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(Array.from(cart)))
+}
+function loadCart() {
+	const cartString = localStorage.getItem(STORAGE_KEY_CART)
+	return new Map<CartItemID, CartItemQuantity>(
+		JSON.parse(cartString ?? EMPTY_CART_JSON)
+	)
+}
+
 type CartItemID = number
 type CartItemQuantity = number
 let cart: Map<CartItemID, CartItemQuantity> = new Map([
@@ -77,24 +88,31 @@ clearCartButton.addEventListener("click", () => {
 	cart.clear()
 	renderCart()
 })
-
-// TODO: refactor; this is getting unwieldy and difficult to read
-// TODO: conditionally render the cart details based on whether or not they are visible
-// NOTE: If the cart details are hidden but there are items in the cart, I still need to know how many items are in the cart so I can update the item total. Everything else can be skipped.
+// Render cart
 function renderCart() {
-	if (cart.size === 0) {
-		cartDetails.classList.add("invisible")
-		cartTotalItems.classList.add("invisible")
-		cartToggleButton.disabled = true
-		return
-	}
+	if (cart.size === 0) return disableCart()
 
+	enableCart()
+	let [totalPrice, totalItems] = populateCart()
+	cartTotalItems.textContent = String(totalItems)
+	if (!cartDetailsHidden) {
+		cartTotalPrice.textContent = formatCurrency(totalPrice / 100)
+	}
+}
+function disableCart() {
+	cartDetails.classList.add("invisible")
+	cartTotalItems.classList.add("invisible")
+	cartToggleButton.disabled = true
+}
+function enableCart() {
 	cartItemList.innerHTML = ""
 	cartDetails.classList.toggle("invisible", cartDetailsHidden)
 	cartTotalItems.classList.remove("invisible")
 	compactViewOnSVG.classList.toggle("hidden", !useCompactView)
 	compactViewOffSVG.classList.toggle("hidden", useCompactView)
 	cartToggleButton.disabled = false
+}
+function populateCart() {
 	let totalPrice = 0
 	let totalItems = 0
 	for (let [id, quantity] of cart) {
@@ -103,10 +121,11 @@ function renderCart() {
 
 		totalPrice += quantity * item.priceCents
 		totalItems += quantity
-		cartItemList.appendChild(renderCartItem(item, quantity))
+		if (!cartDetailsHidden) {
+			cartItemList.appendChild(renderCartItem(item, quantity))
+		}
 	}
-	cartTotalPrice.textContent = formatCurrency(totalPrice / 100)
-	cartTotalItems.textContent = String(totalItems)
+	return [totalPrice, totalItems]
 }
 
 // Cart Item:
