@@ -65,7 +65,6 @@ const items: Item[] = [
 	}
 ]
 
-// Might not need this because of how I'm handling the HTML setup. We'll see.
 export function getItem(id: number) {
 	for (let item of items) {
 		if (id === item.id) return item

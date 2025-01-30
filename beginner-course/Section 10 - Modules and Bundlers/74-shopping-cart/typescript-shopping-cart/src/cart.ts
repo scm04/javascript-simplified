@@ -1,41 +1,40 @@
 import { getItem, Item } from "./items.ts"
 import formatCurrency from "./utilities.ts"
 
-// Persist using Session Storage or Local Storage
-// 1. Whenever the cart is updated, save it to storage.
-// 2. Whenever the cart details are toggled, update the state in storage.
-// 3. Whenever the compact view is toggled, update the state in storage.
-// 4. Whenever the cart is rendered, load the above items from storage and apply them as appropriate in the rendering process.
+// Persist using Local Storage
+// (DONE) 1. Whenever the cart is updated, save it to storage.
+// (DONE) 2. Whenever the cart contents are toggled, update the state in storage.
+// (DONE) 3. Whenever the compact view is toggled, update the state in storage.
+// (DONE) 4. Whenever the cart is rendered, load the above items from storage and apply them as appropriate in the rendering process.
 const STORAGE_KEY_CART = "ShoppingCart"
-const STORAGE_KEY_CART_DETAILS = `${STORAGE_KEY_CART}HideDetails`
+const STORAGE_KEY_CART_CONTENTS = `${STORAGE_KEY_CART}HideContents`
 const STORAGE_KEY_COMPACT_VIEW = `${STORAGE_KEY_CART}UseCompactView`
-const EMPTY_CART_JSON = "[]"
-function saveCart() {
+const DEFAULT_CART_STRING = "[]"
+const DEFAULT_HIDE_CONTENTS = "true"
+const DEFAULT_USE_COMPACT_VIEW = "false"
+
+type CartItemID = number
+type CartItemQuantity = number
+function saveCart(cart: Map<CartItemID, CartItemQuantity>) {
 	localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(Array.from(cart)))
 }
 function loadCart() {
 	const cartString = localStorage.getItem(STORAGE_KEY_CART)
 	return new Map<CartItemID, CartItemQuantity>(
-		JSON.parse(cartString ?? EMPTY_CART_JSON)
+		JSON.parse(cartString ?? DEFAULT_CART_STRING)
 	)
 }
 
-type CartItemID = number
-type CartItemQuantity = number
-let cart: Map<CartItemID, CartItemQuantity> = new Map([
-	[1, 2],
-	[3, 1],
-	[7, 100]
-])
-
 export function addToCart(id: number, quantity: number = 1) {
-	let previousQuantity = cart.get(id) ?? 0
-	cart.set(id, previousQuantity + quantity)
+	let cart = loadCart()
+	cart.set(id, (cart.get(id) ?? 0) + quantity)
+	saveCart(cart)
 	renderCart()
 }
-
 function removeFromCart(id: number) {
+	let cart = loadCart()
 	cart.delete(id)
+	saveCart(cart)
 	renderCart()
 }
 
@@ -46,10 +45,16 @@ const cartElement = document.querySelector("[data-cart]") as HTMLElement
 const cartToggleButton = cartElement.querySelector(
 	"[data-cart-toggle-button]"
 ) as HTMLButtonElement
-const cartDetails = cartElement.querySelector("[data-cart-details]") as HTMLDivElement
-let cartDetailsHidden = false
+function toggleHideCartContents() {
+	localStorage.setItem(STORAGE_KEY_CART_CONTENTS, String(!hideCartContents()))
+}
+function hideCartContents() {
+	return JSON.parse(
+		localStorage.getItem(STORAGE_KEY_CART_CONTENTS) ?? DEFAULT_HIDE_CONTENTS
+	) as boolean
+}
 cartToggleButton.addEventListener("click", () => {
-	cartDetailsHidden = !cartDetailsHidden
+	toggleHideCartContents()
 	renderCart()
 })
 
@@ -61,13 +66,21 @@ cartToggleButton.addEventListener("click", () => {
 const cartTotalItems = cartToggleButton.querySelector(
 	"[data-total-cart-items]"
 ) as HTMLDivElement
-const cartItemList = cartDetails.querySelector("[data-cart-item-list]") as HTMLDivElement
-const cartTotalPrice = cartDetails.querySelector(
+const cartContents = cartElement.querySelector("[data-cart-contents]") as HTMLDivElement
+const cartItemList = cartContents.querySelector("[data-cart-item-list]") as HTMLDivElement
+const cartTotalPrice = cartContents.querySelector(
 	"[data-cart-total-price]"
 ) as HTMLSpanElement
 // Compact view
-let useCompactView = false
-const compactViewButton = cartDetails.querySelector(
+function toggleCompactView() {
+	localStorage.setItem(STORAGE_KEY_COMPACT_VIEW, String(!useCompactView()))
+}
+function useCompactView() {
+	return JSON.parse(
+		localStorage.getItem(STORAGE_KEY_COMPACT_VIEW) ?? DEFAULT_USE_COMPACT_VIEW
+	) as boolean
+}
+const compactViewButton = cartContents.querySelector(
 	"[data-compact-view-button]"
 ) as HTMLButtonElement
 const compactViewOffSVG = compactViewButton.querySelector(
@@ -77,42 +90,49 @@ const compactViewOnSVG = compactViewButton.querySelector(
 	"[data-compact-view-on]"
 ) as SVGElement
 compactViewButton.addEventListener("click", () => {
-	useCompactView = !useCompactView
+	toggleCompactView()
 	renderCart()
 })
 // Clear cart
-const clearCartButton = cartDetails.querySelector(
+const clearCartButton = cartContents.querySelector(
 	"[data-clear-cart-button]"
 ) as HTMLButtonElement
 clearCartButton.addEventListener("click", () => {
-	cart.clear()
+	saveCart(new Map<CartItemID, CartItemQuantity>())
 	renderCart()
 })
 // Render cart
 function renderCart() {
+	const cart = loadCart()
 	if (cart.size === 0) return disableCart()
 
-	enableCart()
-	let [totalPrice, totalItems] = populateCart()
+	const hideContents = hideCartContents()
+	const useCompact = useCompactView()
+	enableCart(hideContents, useCompact)
+	const [totalPrice, totalItems] = populateCart(cart, hideContents, useCompact)
 	cartTotalItems.textContent = String(totalItems)
-	if (!cartDetailsHidden) {
+	if (!hideContents) {
 		cartTotalPrice.textContent = formatCurrency(totalPrice / 100)
 	}
 }
 function disableCart() {
-	cartDetails.classList.add("invisible")
+	cartContents.classList.add("invisible")
 	cartTotalItems.classList.add("invisible")
 	cartToggleButton.disabled = true
 }
-function enableCart() {
+function enableCart(hideContents: boolean, useCompactView: boolean) {
 	cartItemList.innerHTML = ""
-	cartDetails.classList.toggle("invisible", cartDetailsHidden)
+	cartContents.classList.toggle("invisible", hideContents)
 	cartTotalItems.classList.remove("invisible")
 	compactViewOnSVG.classList.toggle("hidden", !useCompactView)
 	compactViewOffSVG.classList.toggle("hidden", useCompactView)
 	cartToggleButton.disabled = false
 }
-function populateCart() {
+function populateCart(
+	cart: Map<CartItemID, CartItemQuantity>,
+	hideContents: boolean,
+	useCompactView: boolean
+) {
 	let totalPrice = 0
 	let totalItems = 0
 	for (let [id, quantity] of cart) {
@@ -121,8 +141,8 @@ function populateCart() {
 
 		totalPrice += quantity * item.priceCents
 		totalItems += quantity
-		if (!cartDetailsHidden) {
-			cartItemList.appendChild(renderCartItem(item, quantity))
+		if (!hideContents) {
+			cartItemList.appendChild(renderCartItem(item, quantity, useCompactView))
 		}
 	}
 	return [totalPrice, totalItems]
@@ -133,18 +153,17 @@ function populateCart() {
 // "id" will be used to look up the item in items.ts and the resulting item will be used to populate the HTML.
 // When rendered:
 // (DONE) 1. Set the image color.
-// (DONE) 2. Add an event listener to the "x" button that removes the item from the cart.
+// (DONE) 2. Add an event listener to the button that removes the item from the cart.
 // (DONE) 3. Set the item's name.
-// (DONE) 4. Set the item's quantity. If the quantity is one, hide the quantity span.
+// (DONE) 4. Set the item's quantity. If the quantity is one, hide the quantity.
 // (DONE) 5. Set the price.
-// TODO: Once I'm done implementing everything, the cart contents should be hidden by default.
 const fullCartItemTemplate = cartElement.querySelector(
 	"[data-full-cart-item-template]"
 ) as HTMLTemplateElement
 const compactCartItemTemplate = cartElement.querySelector(
 	"[data-compact-cart-item-template]"
 ) as HTMLTemplateElement
-function renderCartItem(item: Item, quantity: CartItemQuantity) {
+function renderCartItem(item: Item, quantity: CartItemQuantity, useCompactView: boolean) {
 	// once the compact item template is complete, this should decide which template to use based on useCompactView
 	const cartItemElement = (
 		useCompactView ? compactCartItemTemplate : fullCartItemTemplate
