@@ -3,7 +3,7 @@ import { getItems, Item } from "./items.ts"
 import formatCurrency from "./utilities.ts"
 
 // (DONE) 1. Populate the items on the page dynamically. Make the "Add to Cart" button functional when creating each item.
-// (DONE) BONUS: In the item layout, add a way to change the quantity before adding it to the cart and adjust the "Add to Cart" button to take into account the set quantity. The quantity should default to 1 to keep the same behavior as the "before" implementation.
+// (DONE) BONUS: In the item layout, add a way to change the quantity before adding it to the cart and adjust the "Add to Cart" button to take into account the set quantity. The quantity should default to 1 to keep the same behavior as the "before" implementation. Pressing enter in the quantity field should also add the item to the cart.
 const storeItemTemplate = document.querySelector(
 	"[data-store-item]"
 ) as HTMLTemplateElement
@@ -32,6 +32,21 @@ function renderStoreItem(item: Item) {
 	const quantityInput = itemElement.querySelector(
 		"[data-quantity-input]"
 	) as HTMLInputElement
+	quantityInput.addEventListener("input", () => {
+		if (quantityInput.valueAsNumber < 1) {
+			quantityInput.valueAsNumber = 1
+		}
+		if (quantityInput.valueAsNumber > 100) {
+			quantityInput.valueAsNumber = 100
+		}
+	})
+	quantityInput.addEventListener("keyup", e => {
+		if (e.key !== "Enter") return
+		addToCart(item.id, quantityInput.valueAsNumber)
+	})
+	quantityInput.addEventListener("blur", () => {
+		quantityInput.valueAsNumber = 1
+	})
 	reduceQuantityButton.addEventListener("click", () => {
 		if (quantityInput.valueAsNumber < 2) return
 		quantityInput.valueAsNumber--

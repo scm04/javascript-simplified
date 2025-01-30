@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
+  <script type="module" src="src/store.ts"></script>
   <title>Team</title>
 </head>
 <body>
@@ -119,59 +120,91 @@
     </div>
   </section>
   <section data-cart>
-    <div class="mb-4 top-0 right-0 mr-4 mt-20 fixed">
+    <div class="mb-4 top-0 right-0 mr-4 mt-20 fixed" data-cart-contents>
       <div style="max-height: calc(100vh - 6rem)"
         class="bg-white text-gray-700 body-font shadow-lg border rounded-lg flex flex-col">
-        <div class="overflow-y-auto px-4 pt-4">
-          <div class="mb-6">
-            <div class="block relative h-24 rounded overflow-hidden">
-              <img src="https://dummyimage.com/210x130/F00/F00" alt="ecommerce"
-                class="object-cover object-center w-full h-full block rounded">
-              <button data-remove-from-cart-button
-                class="absolute top-0 right-0 bg-black rounded-tr text-white w-6 h-6 text-lg flex justify-center items-center">&times;</button>
-            </div>
-            <div class="mt-2 flex justify-between">
-              <div class="flex items-center title-font">
-                <h2 class="text-gray-900 text-lg font-medium">
-                  Red
-                </h2>
-                <span class="text-gray-600 text-sm font-bold ml-1">x2</span>
-              </div>
-              <div>$32.00</div>
-            </div>
-          </div>
-          <div class="mb-6">
-            <div class="block relative h-24 rounded overflow-hidden">
-              <img src="https://dummyimage.com/210x130/00F/00F" alt="ecommerce"
-                class="object-cover object-center w-full h-full block rounded">
-              <button data-remove-from-cart-button
-                class="absolute top-0 right-0 bg-black rounded-tr text-white w-6 h-6 text-lg flex justify-center items-center">&times;</button>
-            </div>
-            <div class="mt-2 flex justify-between">
-              <div class="flex items-center title-font">
-                <h2 class="text-gray-900 text-lg font-medium">
-                  Blue
-                </h2>
-              </div>
-              <div>$12.00</div>
-            </div>
-          </div>
+        <div class="flex justify-end items-end border-b p-2 gap-2">
+          <button class="w-6" data-compact-view-button>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-compact-view-off>
+              <title>Compact view</title>
+              <path
+                d="M11 15H17V17H11V15M9 7H7V9H9V7M11 13H17V11H11V13M11 9H17V7H11V9M9 11H7V13H9V11M21 5V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H19C20.1 3 21 3.9 21 5M19 5H5V19H19V5M9 15H7V17H9V15Z" />
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-compact-view-on class="hidden">
+              <title>Full view</title>
+              <path
+                d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M7 7H9V9H7V7M7 11H9V13H7V11M7 15H9V17H7V15M17 17H11V15H17V17M17 13H11V11H17V13M17 9H11V7H17V9Z" />
+            </svg>
+          </button>
+          <button class="w-6" title="Clear cart" data-clear-cart-button>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <title>Clear cart</title>
+              <path
+                d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
+            </svg>
+          </button>
         </div>
+        <div class="overflow-y-auto px-4 pt-4" data-cart-item-list></div>
         <div class="flex justify-between items-end border-t p-4">
           <span class="font-bold text-lg uppercase">Total</span>
-          <span class="font-bold">$44.00</span>
+          <span class="font-bold" data-cart-total-price></span>
         </div>
       </div>
     </div>
-    <button class="fixed top-0 right-0 mr-4 mt-4 w-12 bg-blue-500 p-2 rounded-full text-white hover:bg-blue-700">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <button
+      class="fixed top-0 right-0 mr-4 mt-4 w-12 bg-blue-500 p-2 rounded-full text-white hover:bg-blue-700 disabled"
+      data-cart-toggle-button>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        data-cart-with-items-svg>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
       </svg>
+      </svg>
       <div
-        class="bg-red-500 rounded-full text-xs absolute w-6 h-6 flex justify-center items-center right-0 bottom-0 transform translate-x-2 translate-y-2">
-        2</div>
+        class="bg-red-500 rounded-full text-xs absolute w-6 h-6 flex justify-center items-center right-0 bottom-0 transform translate-x-2 translate-y-2"
+        data-total-cart-items></div>
     </button>
+    <template data-full-cart-item-template>
+      <div class="mb-6">
+        <div class="block relative h-24 rounded overflow-hidden">
+          <img alt="ecommerce" class="object-cover object-center w-full h-full block rounded" data-cart-item-image>
+          <button data-remove-from-cart-button class="absolute top-0 right-0 rounded-bl bg-black text-white w-6 h-6">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-current">
+              <title>Remove from cart</title>
+              <path
+                d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
+            </svg>
+          </button>
+        </div>
+        <div class="mt-2 flex justify-between gap-1">
+          <div class="flex items-center title-font">
+            <h2 class="text-gray-900 text-lg font-medium" data-cart-item-name></h2>
+            <span class="text-gray-600 text-sm font-bold ml-1" data-cart-item-quantity></span>
+          </div>
+          <div data-cart-item-price></div>
+        </div>
+      </div>
+    </template>
+    <template data-compact-cart-item-template>
+      <div class="mb-3 flex gap-2 items-center">
+        <div class="block relative h-6 rounded overflow-hidden flex-grow-0">
+          <img alt="ecommerce" class="object-cover object-center w-full h-full block rounded" data-cart-item-image>
+        </div>
+        <div class="flex items-end gap-2 flex-grow title-font">
+          <h2 class="text-gray-900 text-md font-medium" data-cart-item-name></h2>
+          <div class="text-gray-600 text-sm font-bold ml-1" data-cart-item-quantity>
+          </div>
+        </div>
+        <div class="text-md flex-grow-0" data-cart-item-price></div>
+        <button data-remove-from-cart-button class="rounded w-5 h-5 text-md flex-grow-0">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-current">
+            <title>Remove from cart</title>
+            <path
+              d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
+          </svg>
+        </button>
+      </div>
+    </template>
   </section>
 </body>
 </html>
