@@ -3,14 +3,16 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "script.js",
+	"type": "module",
 	"scripts": {
-		"start": "parcel index.html",
-		"build": "parcel build index.html"
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"parcel": "^2.2.1"
+		"vite": "^6.0.5"
 	}
 }
