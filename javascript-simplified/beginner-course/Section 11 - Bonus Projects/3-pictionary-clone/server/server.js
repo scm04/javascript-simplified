@@ -1,5 +1,5 @@
 const production = process.env.NODE_ENV === "production"
-const clientURL = production ? "google.com" : "http://localhost:1234"
+const clientURL = production ? "google.com" : "http://localhost:5173"
 
 const { Server } = require("socket.io")
 const io = new Server(3000, {
