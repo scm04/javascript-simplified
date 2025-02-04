@@ -1,6 +1,20 @@
 import addGlobalEventListener from "./utilities/addGlobalEventListener.ts"
 
-const DEFAULT_SPACING = "5"
+/**
+ * The default value for the space between the tooltip and the element
+ * the tooltip is for. Also the default size of the arrow/tail of the
+ * tooltip. To override this value, add the data attribute
+ * [data-spacing-and-arrow-size="\<number\>"] to any HTML element that
+ * also has a [data-tooltip] data attribute.
+ */
+const DEFAULT_SPACING_AND_ARROW_SIZE = "10"
+/**
+ * The default order to use when positioning the tooltip.
+ * To override this value, add the data attribute
+ * [data-positions="\<position-list\>"] to any HTML element that also
+ * has a [data-tooltip] data attribute. \<position-list\> is a list of
+ * one or more \<string\> values separated by a pipe ("|") symbol.
+ */
 const POSITION_ORDER = [
 	"top",
 	"bottom",
@@ -33,6 +47,10 @@ document.body.append(tooltipContainer)
 addGlobalEventListener("mouseover", "[data-tooltip]", e => {
 	const target = e.target as HTMLElement
 	const tooltip = createTooltipElement(target.dataset.tooltip as string)
+	tooltip.style.setProperty(
+		"--arrow-size",
+		`${target.dataset.spacingAndArrowSize ?? DEFAULT_SPACING_AND_ARROW_SIZE}px`
+	)
 	tooltipContainer.append(tooltip)
 	positionTooltip(tooltip, target)
 	// target.addEventListener(
@@ -69,11 +87,23 @@ function resetTooltipPosition(tooltip: HTMLDivElement) {
 	tooltip.style.right = "initial"
 	tooltip.style.top = "initial"
 	tooltip.style.bottom = "initial"
+	tooltip.classList.remove(
+		"arrow-top",
+		"arrow-bottom",
+		"arrow-left",
+		"arrow-right",
+		"arrow-top-left",
+		"arrow-top-right",
+		"arrow-bottom-left",
+		"arrow-bottom-right"
+	)
 }
 
 function positionTooltip(tooltip: HTMLDivElement, target: HTMLElement) {
 	const targetRect = target.getBoundingClientRect()
-	const spacing = parseInt(target.dataset.spacing ?? DEFAULT_SPACING)
+	const spacing = parseInt(
+		target.dataset.spacingAndArrowSize ?? DEFAULT_SPACING_AND_ARROW_SIZE
+	)
 	const preferredPositions = (target.dataset.positions ?? "").split("|")
 	const positions = new Set<string>(preferredPositions.concat(POSITION_ORDER))
 
@@ -88,6 +118,7 @@ function positionTooltipTop(
 	targetRect: DOMRect,
 	spacing: number
 ) {
+	// Tooltip positioning
 	const tooltipRect = tooltip.getBoundingClientRect()
 	tooltip.style.top = `${targetRect.top - tooltipRect.height - spacing}px`
 	tooltip.style.left = `${
@@ -106,6 +137,15 @@ function positionTooltipTop(
 	if (bounds.left) {
 		tooltip.style.left = `${spacing}px`
 	}
+
+	// Arrow positioning
+	const arrowSize = parseInt(tooltip.style.getPropertyValue("--arrow-size"))
+	tooltip.style.setProperty("--arrow-top", `${tooltipRect.bottom}px`)
+	tooltip.style.setProperty(
+		"--arrow-left",
+		`${tooltipRect.left + tooltipRect.width / 2 - arrowSize}px`
+	)
+	tooltip.classList.add("arrow-top")
 
 	return true
 }
@@ -134,6 +174,15 @@ function positionTooltipBottom(
 		tooltip.style.left = `${spacing}px`
 	}
 
+	// Arrow positioning
+	const arrowSize = parseInt(tooltip.style.getPropertyValue("--arrow-size"))
+	tooltip.style.setProperty("--arrow-top", `${tooltipRect.top - arrowSize * 2}px`)
+	tooltip.style.setProperty(
+		"--arrow-left",
+		`${tooltipRect.left + tooltipRect.width / 2 - arrowSize}px`
+	)
+	tooltip.classList.add("arrow-bottom")
+
 	return true
 }
 
@@ -143,6 +192,7 @@ function positionTooltipLeft(
 	spacing: number
 ) {
 	const tooltipRect = tooltip.getBoundingClientRect()
+	tooltip.classList.add("arrow-left")
 	tooltip.style.top = `${
 		targetRect.top + targetRect.height / 2 - tooltipRect.height / 2
 	}px`
@@ -170,6 +220,7 @@ function positionTooltipRight(
 	spacing: number
 ) {
 	const tooltipRect = tooltip.getBoundingClientRect()
+	tooltip.classList.add("arrow-right")
 	tooltip.style.top = `${
 		targetRect.top + targetRect.height / 2 - tooltipRect.height / 2
 	}px`
@@ -197,21 +248,14 @@ function positionTooltipTopLeft(
 	spacing: number
 ) {
 	const tooltipRect = tooltip.getBoundingClientRect()
+	tooltip.classList.add("arrow-top-left")
 	tooltip.style.top = `${targetRect.top - tooltipRect.height - spacing}px`
 	tooltip.style.left = `${targetRect.left + targetRect.width / 2 - tooltipRect.width}px`
 
 	const bounds = isOutOfBounds(tooltip, spacing)
-	// This is not correct yet. I need to figure out how the logic should work when the tooltip is out of bounds.
 	if (bounds.top || bounds.left) {
 		resetTooltipPosition(tooltip)
 		return false
-	}
-	if (bounds.right) {
-		tooltip.style.right = `${spacing}px`
-		tooltip.style.left = "initial"
-	}
-	if (bounds.left) {
-		tooltip.style.left = `${spacing}px`
 	}
 
 	return true
@@ -222,24 +266,15 @@ function positionTooltipTopRight(
 	targetRect: DOMRect,
 	spacing: number
 ) {
-	// This is not correct yet. I need to figure out what the initial position should be and how the logic should work when the tooltip is out of bounds.
 	const tooltipRect = tooltip.getBoundingClientRect()
+	tooltip.classList.add("arrow-top-right")
 	tooltip.style.top = `${targetRect.top - tooltipRect.height - spacing}px`
-	tooltip.style.left = `${
-		targetRect.right + targetRect.width / 2 + tooltipRect.width
-	}px`
+	tooltip.style.left = `${targetRect.right - targetRect.width / 2}px`
 
 	const bounds = isOutOfBounds(tooltip, spacing)
-	if (bounds.top) {
+	if (bounds.top || bounds.right) {
 		resetTooltipPosition(tooltip)
 		return false
-	}
-	if (bounds.right) {
-		tooltip.style.right = `${spacing}px`
-		tooltip.style.left = "initial"
-	}
-	if (bounds.left) {
-		tooltip.style.left = `${spacing}px`
 	}
 
 	return true
@@ -249,13 +284,38 @@ function positionTooltipBottomLeft(
 	tooltip: HTMLDivElement,
 	targetRect: DOMRect,
 	spacing: number
-) {}
+) {
+	const tooltipRect = tooltip.getBoundingClientRect()
+	tooltip.classList.add("arrow-bottom-left")
+	tooltip.style.top = `${targetRect.bottom + spacing}px`
+	tooltip.style.left = `${targetRect.left + targetRect.width / 2 - tooltipRect.width}px`
+
+	const bounds = isOutOfBounds(tooltip, spacing)
+	if (bounds.top || bounds.left) {
+		resetTooltipPosition(tooltip)
+		return false
+	}
+
+	return true
+}
 
 function positionTooltipBottomRight(
 	tooltip: HTMLDivElement,
 	targetRect: DOMRect,
 	spacing: number
-) {}
+) {
+	tooltip.classList.add("arrow-bottom-right")
+	tooltip.style.top = `${targetRect.bottom + spacing}px`
+	tooltip.style.left = `${targetRect.right - targetRect.width / 2}px`
 
-// CHALLENGE 1: Add other positions (top-left, top-right, bottom-left, bottom-right)
+	const bounds = isOutOfBounds(tooltip, spacing)
+	if (bounds.top || bounds.right) {
+		resetTooltipPosition(tooltip)
+		return false
+	}
+
+	return true
+}
+
+// (DONE) CHALLENGE 1: Add other positions (top-left, top-right, bottom-left, bottom-right)
 // CHALLENGE 2: Add a speech-bubble-style arrow to the tooltip.
