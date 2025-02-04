@@ -54,11 +54,59 @@ body {
 }
 
 .tooltip {
+	--border-color: black;
+	--background-color: white;
+	--arrow-size: 10px;
+	--arrow-top: 0px;
+	--arrow-left: 0px;
 	position: absolute;
 	padding: 0.4rem;
-	border: 1px solid black;
+	border: 1px solid var(--border-color);
 	border-radius: 0.25rem;
 	font-size: 0.75rem;
 	max-width: 200px;
 	user-select: none;
+	background-color: var(--background-color);
+
+	&::before,
+	&::after {
+		content: "";
+		display: block;
+		position: absolute;
+		width: 0;
+		height: 0;
+	}
+
+	&::before {
+		border: var(--arrow-size) solid;
+		left: calc(var(--arrow-left) - 1px);
+	}
+	&::after {
+		border: calc(var(--arrow-size) - 1px) solid;
+		left: var(--arrow-left);
+	}
+
+	&.arrow-top {
+		&::before,
+		&::after {
+			top: calc(var(--arrow-top) - 2px);
+		}
+		&::before {
+			border-color: var(--border-color) transparent transparent;
+		}
+		&::after {
+			border-color: var(--background-color) transparent transparent;
+		}
+	}
+
+	&.arrow-bottom {
+		&::before {
+			border-color: transparent transparent var(--border-color);
+			top: var(--arrow-top);
+		}
+		&::after {
+			border-color: transparent transparent var(--background-color);
+			top: calc(var(--arrow-top) + 2px);
+		}
+	}
 }
