@@ -9,6 +9,12 @@ import addGlobalEventListener from "./utilities/addGlobalEventListener.ts"
  */
 const DEFAULT_SPACING_AND_ARROW_SIZE = "10"
 /**
+ * How far the arrow/tail of the tooltip will be away from the edge of
+ * the tooltip when positioned in one of the corners (top-left,
+ * top-right, bottom-left, or bottom-right).
+ */
+const CORNER_TOOLTIP_ARROW_SPACING = 10
+/**
  * The default order to use when positioning the tooltip.
  * To override this value, add the data attribute
  * [data-positions="\<position-list\>"] to any HTML element that also
@@ -53,13 +59,13 @@ addGlobalEventListener("mouseover", "[data-tooltip]", e => {
 	)
 	tooltipContainer.append(tooltip)
 	positionTooltip(tooltip, target)
-	// target.addEventListener(
-	// 	"mouseleave",
-	// 	() => {
-	// 		tooltip.remove()
-	// 	},
-	// 	{ once: true }
-	// )
+	target.addEventListener(
+		"mouseleave",
+		() => {
+			tooltip.remove()
+		},
+		{ once: true }
+	)
 })
 
 function createTooltipElement(tooltipText: string) {
@@ -87,16 +93,7 @@ function resetTooltipPosition(tooltip: HTMLDivElement) {
 	tooltip.style.right = "initial"
 	tooltip.style.top = "initial"
 	tooltip.style.bottom = "initial"
-	tooltip.classList.remove(
-		"arrow-top",
-		"arrow-bottom",
-		"arrow-left",
-		"arrow-right",
-		"arrow-top-left",
-		"arrow-top-right",
-		"arrow-bottom-left",
-		"arrow-bottom-right"
-	)
+	tooltip.classList.remove("arrow-top", "arrow-bottom", "arrow-left", "arrow-right")
 }
 
 function positionTooltip(tooltip: HTMLDivElement, target: HTMLElement) {
@@ -119,7 +116,7 @@ function positionTooltipTop(
 	spacing: number
 ) {
 	// Tooltip positioning
-	const tooltipRect = tooltip.getBoundingClientRect()
+	let tooltipRect = tooltip.getBoundingClientRect()
 	tooltip.style.top = `${targetRect.top - tooltipRect.height - spacing}px`
 	tooltip.style.left = `${
 		targetRect.left + targetRect.width / 2 - tooltipRect.width / 2
@@ -139,11 +136,12 @@ function positionTooltipTop(
 	}
 
 	// Arrow positioning
+	tooltipRect = tooltip.getBoundingClientRect()
 	const arrowSize = parseInt(tooltip.style.getPropertyValue("--arrow-size"))
-	tooltip.style.setProperty("--arrow-top", `${tooltipRect.bottom}px`)
+	tooltip.style.setProperty("--arrow-top", `${tooltipRect.height}px`)
 	tooltip.style.setProperty(
 		"--arrow-left",
-		`${tooltipRect.left + tooltipRect.width / 2 - arrowSize}px`
+		`${targetRect.width / 2 + (targetRect.left - tooltipRect.left) - arrowSize}px`
 	)
 	tooltip.classList.add("arrow-top")
 
@@ -155,7 +153,8 @@ function positionTooltipBottom(
 	targetRect: DOMRect,
 	spacing: number
 ) {
-	const tooltipRect = tooltip.getBoundingClientRect()
+	// Tooltip positioning
+	let tooltipRect = tooltip.getBoundingClientRect()
 	tooltip.style.top = `${targetRect.bottom + spacing}px`
 	tooltip.style.left = `${
 		targetRect.left + targetRect.width / 2 - tooltipRect.width / 2
@@ -175,11 +174,12 @@ function positionTooltipBottom(
 	}
 
 	// Arrow positioning
+	tooltipRect = tooltip.getBoundingClientRect()
 	const arrowSize = parseInt(tooltip.style.getPropertyValue("--arrow-size"))
-	tooltip.style.setProperty("--arrow-top", `${tooltipRect.top - arrowSize * 2}px`)
+	tooltip.style.setProperty("--arrow-top", `${arrowSize * -2}px`)
 	tooltip.style.setProperty(
 		"--arrow-left",
-		`${tooltipRect.left + tooltipRect.width / 2 - arrowSize}px`
+		`${targetRect.width / 2 + (targetRect.left - tooltipRect.left) - arrowSize}px`
 	)
 	tooltip.classList.add("arrow-bottom")
 
@@ -191,8 +191,8 @@ function positionTooltipLeft(
 	targetRect: DOMRect,
 	spacing: number
 ) {
-	const tooltipRect = tooltip.getBoundingClientRect()
-	tooltip.classList.add("arrow-left")
+	// Tooltip positioning
+	let tooltipRect = tooltip.getBoundingClientRect()
 	tooltip.style.top = `${
 		targetRect.top + targetRect.height / 2 - tooltipRect.height / 2
 	}px`
@@ -211,6 +211,16 @@ function positionTooltipLeft(
 		tooltip.style.top = `${spacing}px`
 	}
 
+	// Arrow positioning
+	tooltipRect = tooltip.getBoundingClientRect()
+	const arrowSize = parseInt(tooltip.style.getPropertyValue("--arrow-size"))
+	tooltip.style.setProperty(
+		"--arrow-top",
+		`${targetRect.height / 2 + (targetRect.top - tooltipRect.top) - arrowSize}px`
+	)
+	tooltip.style.setProperty("--arrow-left", `${tooltipRect.width}px`)
+	tooltip.classList.add("arrow-left")
+
 	return true
 }
 
@@ -219,8 +229,8 @@ function positionTooltipRight(
 	targetRect: DOMRect,
 	spacing: number
 ) {
-	const tooltipRect = tooltip.getBoundingClientRect()
-	tooltip.classList.add("arrow-right")
+	// Tooltip positioning
+	let tooltipRect = tooltip.getBoundingClientRect()
 	tooltip.style.top = `${
 		targetRect.top + targetRect.height / 2 - tooltipRect.height / 2
 	}px`
@@ -239,6 +249,16 @@ function positionTooltipRight(
 		tooltip.style.top = `${spacing}px`
 	}
 
+	// Arrow positioning
+	tooltipRect = tooltip.getBoundingClientRect()
+	const arrowSize = parseInt(tooltip.style.getPropertyValue("--arrow-size"))
+	tooltip.style.setProperty(
+		"--arrow-top",
+		`${targetRect.height / 2 + (targetRect.top - tooltipRect.top) - arrowSize}px`
+	)
+	tooltip.style.setProperty("--arrow-left", `${arrowSize * -2}px`)
+	tooltip.classList.add("arrow-right")
+
 	return true
 }
 
@@ -247,7 +267,8 @@ function positionTooltipTopLeft(
 	targetRect: DOMRect,
 	spacing: number
 ) {
-	const tooltipRect = tooltip.getBoundingClientRect()
+	// Tooltip positioning
+	let tooltipRect = tooltip.getBoundingClientRect()
 	tooltip.classList.add("arrow-top-left")
 	tooltip.style.top = `${targetRect.top - tooltipRect.height - spacing}px`
 	tooltip.style.left = `${targetRect.left + targetRect.width / 2 - tooltipRect.width}px`
@@ -258,6 +279,16 @@ function positionTooltipTopLeft(
 		return false
 	}
 
+	// Arrow positioning
+	tooltipRect = tooltip.getBoundingClientRect()
+	const arrowSize = parseInt(tooltip.style.getPropertyValue("--arrow-size"))
+	tooltip.style.setProperty("--arrow-top", `${tooltipRect.height}px`)
+	tooltip.style.setProperty(
+		"--arrow-left",
+		`${tooltipRect.width - arrowSize * 2 - CORNER_TOOLTIP_ARROW_SPACING}px`
+	)
+	tooltip.classList.add("arrow-top")
+
 	return true
 }
 
@@ -266,7 +297,8 @@ function positionTooltipTopRight(
 	targetRect: DOMRect,
 	spacing: number
 ) {
-	const tooltipRect = tooltip.getBoundingClientRect()
+	// Tooltip positioning
+	let tooltipRect = tooltip.getBoundingClientRect()
 	tooltip.classList.add("arrow-top-right")
 	tooltip.style.top = `${targetRect.top - tooltipRect.height - spacing}px`
 	tooltip.style.left = `${targetRect.right - targetRect.width / 2}px`
@@ -277,6 +309,12 @@ function positionTooltipTopRight(
 		return false
 	}
 
+	// Arrow positioning
+	tooltipRect = tooltip.getBoundingClientRect()
+	tooltip.style.setProperty("--arrow-top", `${tooltipRect.height}px`)
+	tooltip.style.setProperty("--arrow-left", `${CORNER_TOOLTIP_ARROW_SPACING}px`)
+	tooltip.classList.add("arrow-top")
+
 	return true
 }
 
@@ -285,7 +323,8 @@ function positionTooltipBottomLeft(
 	targetRect: DOMRect,
 	spacing: number
 ) {
-	const tooltipRect = tooltip.getBoundingClientRect()
+	// Tooltip positioning
+	let tooltipRect = tooltip.getBoundingClientRect()
 	tooltip.classList.add("arrow-bottom-left")
 	tooltip.style.top = `${targetRect.bottom + spacing}px`
 	tooltip.style.left = `${targetRect.left + targetRect.width / 2 - tooltipRect.width}px`
@@ -296,6 +335,16 @@ function positionTooltipBottomLeft(
 		return false
 	}
 
+	// Arrow positioning
+	tooltipRect = tooltip.getBoundingClientRect()
+	const arrowSize = parseInt(tooltip.style.getPropertyValue("--arrow-size"))
+	tooltip.style.setProperty("--arrow-top", `${arrowSize * -2}px`)
+	tooltip.style.setProperty(
+		"--arrow-left",
+		`${tooltipRect.width - arrowSize * 2 - CORNER_TOOLTIP_ARROW_SPACING}px`
+	)
+	tooltip.classList.add("arrow-bottom")
+
 	return true
 }
 
@@ -304,6 +353,7 @@ function positionTooltipBottomRight(
 	targetRect: DOMRect,
 	spacing: number
 ) {
+	// Tooltip positioning
 	tooltip.classList.add("arrow-bottom-right")
 	tooltip.style.top = `${targetRect.bottom + spacing}px`
 	tooltip.style.left = `${targetRect.right - targetRect.width / 2}px`
@@ -314,8 +364,14 @@ function positionTooltipBottomRight(
 		return false
 	}
 
+	// Arrow positioning
+	const arrowSize = parseInt(tooltip.style.getPropertyValue("--arrow-size"))
+	tooltip.style.setProperty("--arrow-top", `${arrowSize * -2}px`)
+	tooltip.style.setProperty("--arrow-left", `${CORNER_TOOLTIP_ARROW_SPACING}px`)
+	tooltip.classList.add("arrow-bottom")
+
 	return true
 }
 
 // (DONE) CHALLENGE 1: Add other positions (top-left, top-right, bottom-left, bottom-right)
-// CHALLENGE 2: Add a speech-bubble-style arrow to the tooltip.
+// (DONE) CHALLENGE 2: Add a speech-bubble-style arrow to the tooltip.
