@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Trello Clone</title>
+  <link rel="icon" type="image/svg+xml" href="src/typescript.svg" />
+  <link rel="stylesheet" href="src/styles.css">
+  <script type="module" src="src/main.ts"></script>
+</head>
+<body>
+  <header>
+    <div>Trello Clone</div>
+    <div class="button-controls" data-button-controls>
+      <span class="add-group">
+        <input type="text" class="group-input" placeholder="Group Name" data-group-input>
+        <button class="icon-button" data-add-group-button data-tooltip="Add group">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M20 14H14V20H10V14H4V10H10V4H14V10H20V14Z" />
+          </svg>
+        </button>
+      </span>
+      <button class="icon-button" data-download-button data-tooltip="Download data">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <title>download</title>
+          <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+        </svg>
+      </button>
+      <button class="icon-button" data-upload-button data-tooltip="Upload data">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z" />
+        </svg>
+      </button>
+    </div>
+  </header>
+  <div class="groups">
+    <div class="group">
+      <div class="header">Backlog</div>
+      <div class="tasks" data-drop-zone data-group-id="backlog"></div>
+      <form data-task-form>
+        <input type="text" class="task-input" placeholder="Task Name" data-task-input>
+      </form>
+    </div>
+    <div class="group">
+      <div class="header">Doing</div>
+      <div class="tasks" data-drop-zone data-group-id="doing"></div>
+      <form data-task-form>
+        <input type="text" class="task-input" placeholder="Task Name" data-task-input>
+      </form>
+    </div>
+    <div class="group">
+      <div class="header">Done</div>
+      <div class="tasks" data-drop-zone data-group-id="done"></div>
+      <form data-task-form>
+        <input type="text" class="task-input" placeholder="Task Name" data-task-input>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
