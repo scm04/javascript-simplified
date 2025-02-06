@@ -1,5 +1,5 @@
 import "./tooltip.css"
-import addGlobalEventListener from "./utilities/addGlobalEventListener.ts"
+import addGlobalEventListener from "./addGlobalEventListener.ts"
 
 /**
  * The default value for the space between the tooltip and the element
