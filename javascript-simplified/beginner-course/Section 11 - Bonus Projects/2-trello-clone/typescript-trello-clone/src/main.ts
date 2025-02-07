@@ -6,39 +6,39 @@ import addGlobalEventListener from "./utilities/addGlobalEventListener.ts"
 const STORAGE_PREFIX = "TRELLO_CLONE"
 const GROUPS_STORAGE_KEY = `${STORAGE_PREFIX}Groups`
 
-// Challenge: Allow the user to upload and download tasks
+// Challenge: Allow the user to upload and download items
 // Challenge: Add the ability to create or delete groups
-type Task = {
+type Item = {
 	id: string
 	text: string
 }
 const DEFAULT_GROUPS = {
-	backlog: [{ id: uuid(), text: "Create your first task" }],
+	backlog: [{ id: uuid(), text: "Create your first item with a very very long name" }],
 	doing: [],
 	done: []
-} as Record<string, Task[]>
+} as Record<string, Item[]>
 const groups = loadGroups()
-renderTasks()
+renderItems()
 
 setupDragAndDrop(onDragEnd)
 
-addGlobalEventListener("submit", "[data-task-form]", e => {
+addGlobalEventListener("submit", "[data-item-form]", e => {
 	e.preventDefault()
 
-	const taskForm = e.target as HTMLFormElement
-	const taskInput = taskForm.querySelector("[data-task-input]") as HTMLInputElement
-	const taskText = taskInput.value
-	if (taskText === "") return
+	const itemForm = e.target as HTMLFormElement
+	const itemInput = itemForm.querySelector("[data-item-input]") as HTMLInputElement
+	const itemText = itemInput.value
+	if (itemText === "") return
 
-	const task = { id: uuid(), text: taskText } as Task
-	const groupElement = (taskForm.closest(".group") as HTMLDivElement).querySelector(
+	const item = { id: uuid(), text: itemText } as Item
+	const groupElement = (itemForm.closest(".group") as HTMLDivElement).querySelector(
 		"[data-group-id]"
 	) as HTMLDivElement
-	groups[groupElement.dataset.groupId as string].push(task)
+	groups[groupElement.dataset.groupId as string].push(item)
 
-	const taskElement = createTaskElement(task)
-	groupElement.append(taskElement)
-	taskInput.value = ""
+	const itemElement = createItemElement(item)
+	groupElement.append(itemElement)
+	itemInput.value = ""
 
 	saveGroups()
 })
@@ -46,18 +46,18 @@ addGlobalEventListener("submit", "[data-task-form]", e => {
 function onDragEnd(event: DragEndEvent) {
 	const startGroupId = event.startZone.dataset.groupId as string
 	const endGroupId = event.endZone.dataset.groupId as string
-	const startGroupTasks = groups[startGroupId]
-	const endGroupTasks = groups[endGroupId]
+	const startGroupItems = groups[startGroupId]
+	const endGroupItems = groups[endGroupId]
 
-	const task = startGroupTasks.find(t => t.id === event.dragElement.id) as Task
-	startGroupTasks.splice(startGroupTasks.indexOf(task), 1)
-	endGroupTasks.splice(event.index, 0, task)
+	const item = startGroupItems.find(t => t.id === event.dragElement.id) as Item
+	startGroupItems.splice(startGroupItems.indexOf(item), 1)
+	endGroupItems.splice(event.index, 0, item)
 	saveGroups()
 }
 
 function loadGroups() {
 	let groups = localStorage.getItem(GROUPS_STORAGE_KEY) ?? DEFAULT_GROUPS
-	if (typeof groups === "string") groups = JSON.parse(groups) as Record<string, Task[]>
+	if (typeof groups === "string") groups = JSON.parse(groups) as Record<string, Item[]>
 	return groups
 }
 
@@ -65,24 +65,41 @@ function saveGroups() {
 	localStorage.setItem(GROUPS_STORAGE_KEY, JSON.stringify(groups))
 }
 
-function renderTasks() {
-	Object.entries(groups).forEach(([groupId, tasks]) => {
+function renderItems() {
+	Object.entries(groups).forEach(([groupId, items]) => {
 		const group = document.querySelector(
 			`[data-group-id="${groupId}"]`
 		) as HTMLDivElement
-		tasks.forEach(task => {
-			const taskElement = createTaskElement(task)
-			group.append(taskElement)
+		items.forEach(item => {
+			const itemElement = createItemElement(item)
+			group.append(itemElement)
 		})
 	})
 }
 
-function createTaskElement(task: Task) {
+function createItemElement(item: Item) {
 	const element = document.createElement("div")
-	element.id = task.id
-	element.innerText = task.text
-	element.classList.add("task")
+	element.id = item.id
+	element.classList.add("item")
 	element.dataset.draggable = "true"
+
+	const text = document.createElement("div")
+	text.innerText = item.text
+	text.dataset.itemName = "true"
+	element.append(text)
+
+	const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+	svg.setAttribute("viewBox", "0 0 24 24")
+	const useTag = document.createElementNS("http://www.w3.org/2000/svg", "use")
+	useTag.setAttribute("href", "#close")
+	svg.append(useTag)
+
+	const button = document.createElement("button")
+	button.classList.add("icon-button")
+	button.dataset.deleteItemButton = "true"
+	button.dataset.tooltip = "Delete item"
+	button.append(svg)
+	element.append(button)
 
 	return element
 }

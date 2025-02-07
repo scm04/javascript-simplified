@@ -11,7 +11,7 @@
 </head>
 <body>
   <header>
-    <div>Trello Clone</div>
+    <div>Basic Trello Clone</div>
     <div class="button-controls" data-button-controls>
       <span class="add-group">
         <input type="text" class="group-input" placeholder="Group Name" data-group-input>
@@ -34,28 +34,91 @@
       </button>
     </div>
   </header>
-  <div class="groups">
+  <!-- TODO: Pull in the new item form placeholder and use it when creating each group. -->
+  <div class="groups" data-item-form-placeholder="Task Name">
     <div class="group">
-      <div class="header">Backlog</div>
-      <div class="tasks" data-drop-zone data-group-id="backlog"></div>
-      <form data-task-form>
-        <input type="text" class="task-input" placeholder="Task Name" data-task-input>
+      <div class="group-header">
+        <span data-name>Backlog</span>
+        <button class="icon-button" data-delete-group-button data-tooltip="Delete group">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <use href="#trash-can-outline"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="items" data-drop-zone data-group-id="backlog"></div>
+      <form data-item-form>
+        <input type="text" class="item-input" placeholder="Item Name" data-item-input>
       </form>
     </div>
     <div class="group">
-      <div class="header">Doing</div>
-      <div class="tasks" data-drop-zone data-group-id="doing"></div>
-      <form data-task-form>
-        <input type="text" class="task-input" placeholder="Task Name" data-task-input>
+      <div class="group-header">
+        <span data-name>Doing</span>
+        <button class="icon-button" data-delete-group-button data-tooltip="Delete group">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <use href="#trash-can-outline"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="items" data-drop-zone data-group-id="doing"></div>
+      <form data-item-form>
+        <input type="text" class="item-input" placeholder="Item Name" data-item-input>
       </form>
     </div>
     <div class="group">
-      <div class="header">Done</div>
-      <div class="tasks" data-drop-zone data-group-id="done"></div>
-      <form data-task-form>
-        <input type="text" class="task-input" placeholder="Task Name" data-task-input>
+      <div class="group-header">
+        <span data-name>Done</span>
+        <button class="icon-button" data-delete-group-button data-tooltip="Delete group">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <use href="#trash-can-outline"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="items" data-drop-zone data-group-id="done"></div>
+      <form data-item-form>
+        <input type="text" class="item-input" placeholder="Item Name" data-item-input>
       </form>
     </div>
   </div>
+  <!-- TODO: Make group creation dynamic rather than having anything hard-coded. -->
+  <template data-group-template>
+    <div class="group">
+      <div class="group-header">
+        <span data-name></span>
+        <button class="icon-button" data-delete-group-button data-tooltip="Delete group">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <use href="#trash-can-outline"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="items" data-drop-zone data-group-id=""></div>
+      <form data-item-form>
+        <input type="text" class="item-input" placeholder="Item Name" data-item-input>
+      </form>
+    </div>
+  </template>
+  <!-- TODO: Make item element creation use this instead of creating everything in JavaScript. -->
+  <template data-item-template>
+    <div class="item" data-draggable>
+      <div data-item-name></div>
+      <button class="icon-button" data-delete-item-button data-tooltip="Delete item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <use href="#close"></use>
+        </svg>
+      </button>
+    </div>
+  </template>
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+    <path id="trash-can-outline"
+      d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
+    <path id="delete-outline"
+      d="M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19M8,9H16V19H8V9M15.5,4L14.5,3H9.5L8.5,4H5V6H19V4H15.5Z" />
+    <path id="delete-icon" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+    <path id="trash-can"
+      d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" />
+    <path id="delete-forever"
+      d="M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19M8.46,11.88L9.87,10.47L12,12.59L14.12,10.47L15.53,11.88L13.41,14L15.53,16.12L14.12,17.53L12,15.41L9.88,17.53L8.47,16.12L10.59,14L8.46,11.88M15.5,4L14.5,3H9.5L8.5,4H5V6H19V4H15.5Z" />
+    <path id="close"
+      d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+  </svg>
 </body>
 </html>
