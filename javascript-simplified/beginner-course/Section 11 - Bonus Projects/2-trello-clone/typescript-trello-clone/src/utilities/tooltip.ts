@@ -60,9 +60,40 @@ addGlobalEventListener("mouseover", "[data-tooltip]", e => {
 	)
 	tooltipContainer.append(tooltip)
 	positionTooltip(tooltip, target)
+
+	// TODO: Generalize this observer behavior and add it to the original tooltip library as an optional feature.
+	// This particular feature can be enabled by adding the data attribute [data-tooltip-observe] to the element
+	// that should be observed. The tooltip library will look for the closest ancestor with the data attribute,
+	// and if one is found, it will add an observer to the element.
+	// NOTE: The element must be an ancestor of the target that will not be deleted. In my testing, observing
+	// the element that is deleted does not trigger the observer.
+	const elementToObserve = target.closest("[data-group-id]") as HTMLDivElement
+	const callback: MutationCallback = (
+		records: MutationRecord[],
+		observer: MutationObserver
+	) => {
+		for (const record of records) {
+			if (record.removedNodes.length === 0) continue
+			// This should probably check to make sure the removed element actually includes the target.
+			// I'm not sure if there's an easy way to to this, but if there's not, I could use a second
+			// data attribute on the outermost element of the elements that will be deleted.
+			// For example, in the Trello clone, the element with [data-draggable] is the outermost
+			// element of each "Item" in the HTML, so that is the element that will show up in the
+			// mutation record (I'm pretty sure), but the delete button is the element with the tooltip
+			// on it. If I'm right, I think we need some way to check that the delete button is included
+			// in the [data-draggable] element that was deleted so the library doesn't remove the wrong
+			// tooltip.
+			tooltip.remove()
+			observer.disconnect()
+		}
+	}
+	const observer = new MutationObserver(callback)
+	observer.observe(elementToObserve, { childList: true })
+
 	target.addEventListener(
 		"mouseleave",
 		() => {
+			observer.disconnect()
 			tooltip.remove()
 		},
 		{ once: true }

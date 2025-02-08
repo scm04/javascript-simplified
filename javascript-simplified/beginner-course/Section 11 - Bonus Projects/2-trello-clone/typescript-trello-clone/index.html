@@ -35,7 +35,7 @@
     </div>
   </header>
   <!-- TODO: Pull in the new item form placeholder and use it when creating each group. -->
-  <div class="groups" data-item-form-placeholder="Task Name">
+  <div class="groups" data-item-form-placeholder="Task Name" data-tooltip-observe>
     <div class="group">
       <div class="group-header">
         <span data-name>Backlog</span>
@@ -90,16 +90,15 @@
           </svg>
         </button>
       </div>
-      <div class="items" data-drop-zone data-group-id=""></div>
+      <div class="items" data-drop-zone data-tooltip-observe></div>
       <form data-item-form>
         <input type="text" class="item-input" placeholder="Item Name" data-item-input>
       </form>
     </div>
   </template>
-  <!-- TODO: Make item element creation use this instead of creating everything in JavaScript. -->
   <template data-item-template>
     <div class="item" data-draggable>
-      <div data-item-name></div>
+      <div data-item-text></div>
       <button class="icon-button" data-delete-item-button data-tooltip="Delete item">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <use href="#close"></use>

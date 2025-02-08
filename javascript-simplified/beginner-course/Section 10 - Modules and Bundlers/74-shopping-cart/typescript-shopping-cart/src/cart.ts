@@ -165,9 +165,10 @@ const compactCartItemTemplate = cartElement.querySelector(
 ) as HTMLTemplateElement
 function renderCartItem(item: Item, quantity: CartItemQuantity, useCompactView: boolean) {
 	// once the compact item template is complete, this should decide which template to use based on useCompactView
-	const cartItemElement = (
+	const fragment = (
 		useCompactView ? compactCartItemTemplate : fullCartItemTemplate
-	).content.cloneNode(true) as HTMLDivElement
+	).content.cloneNode(true) as DocumentFragment
+	const cartItemElement = fragment.children[0] as HTMLDivElement
 
 	const image = cartItemElement.querySelector(
 		"[data-cart-item-image]"
