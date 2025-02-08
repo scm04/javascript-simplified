@@ -127,8 +127,9 @@ header {
 	text-align: center;
 	word-wrap: break-word;
 
-	[data-item-name] {
+	[data-item-text] {
 		grid-column-start: 2;
+		pointer-events: none;
 	}
 
 	[data-delete-item-button] {
