@@ -1,7 +1,6 @@
 import "./utilities/tooltip.ts"
 import setupDragAndDrop, { DragEndEvent } from "./dragAndDrop.ts"
 import { v4 as uuid } from "uuid"
-import addGlobalEventListener from "./utilities/addGlobalEventListener.ts"
 
 const STORAGE_PREFIX = "TRELLO_CLONE"
 const GROUPS_STORAGE_KEY = `${STORAGE_PREFIX}Groups`
@@ -21,16 +20,52 @@ function onDragEnd(event: DragEndEvent) {
 }
 
 // Challenge: Allow the user to upload and download items
-// Challenge: Add the ability to create or delete groups
+// TODO: Get the upload and download functionality from my original solution and use it as a starting point for this one.
+// I don't really feel like going through the whole mental exercise of creating the interface I made last time, so since
+// I like that interface, I want to just use it again here, but with the JS converted to TS.
+const DOWNLOAD_BUTTON = document.querySelector(
+	"[data-download-button]"
+) as HTMLButtonElement
+const UPLOAD_BUTTON = document.querySelector("[data-upload-button]") as HTMLButtonElement
+// (DONE) Challenge: Add the ability to create and delete groups
+const GROUPS_ELEMENT = document.querySelector("[data-groups]") as HTMLDivElement
+const NEW_GROUP_INPUT = document.querySelector(
+	"[data-new-group-input]"
+) as HTMLInputElement
+NEW_GROUP_INPUT.addEventListener("keyup", e => {
+	if (e.key !== "Enter") return
+	addGroup()
+})
+const ADD_GROUP_BUTTON = document.querySelector(
+	"[data-add-group-button]"
+) as HTMLButtonElement
+ADD_GROUP_BUTTON.addEventListener("click", () => addGroup)
+
+function addGroup() {
+	const groupName = NEW_GROUP_INPUT.value
+	if (groupName === "") return
+
+	groups[groupName] = []
+
+	const groupElement = createGroupElement(groupName)
+	GROUPS_ELEMENT.append(groupElement)
+
+	NEW_GROUP_INPUT.value = ""
+
+	saveGroups()
+}
+
 type Item = {
 	id: string
 	text: string
 }
 type Groups = Record<string, Item[]>
 const DEFAULT_GROUPS = {
-	backlog: [{ id: uuid(), text: "Create your first item with a very very long name" }],
-	doing: [],
-	done: []
+	Backlog: [
+		{ id: uuid(), text: "Create your first item (with a very incredibly long name)" }
+	],
+	Doing: [],
+	Done: []
 } as Groups
 const groups = loadGroups()
 
@@ -43,7 +78,16 @@ function saveGroups() {
 	localStorage.setItem(GROUPS_STORAGE_KEY, JSON.stringify(groups))
 }
 
-const GROUPS_ELEMENT = document.querySelector(".groups") as HTMLDivElement
+// Challenge: Make the groups draggable so they can be reordered by the user
+// Challenge: Make the group name editable (use TS and CSS to swap a text element with an input)
+// NOTE: Input is in place for the group name.
+// TODO: When the display span is clicked, swap the span with the input.
+// TODO: If the escape key is pressed while in the input, clear the input and swap to the span.
+// TODO: If the enter key is pressed while in the input, update the span, clear the input, and swap to the span.
+// TODO: If the save button is clicked, update the span, clear the input, and swap to the span.
+const DEFAULT_FORM_PLACEHOLDER = "Item Name"
+const FORM_PLACEHOLDER =
+	GROUPS_ELEMENT.dataset.itemFormPlaceholder ?? DEFAULT_FORM_PLACEHOLDER
 const GROUP_TEMPLATE = document.querySelector(
 	"[data-group-template]"
 ) as HTMLTemplateElement
@@ -62,44 +106,36 @@ function createGroupElement(groupName: string) {
 		saveGroups()
 		groupElement.remove()
 	})
+
+	const itemList = groupElement.querySelector("[data-items]") as HTMLDivElement
+	itemList.dataset.groupId = groupName
+
+	const newItemForm = groupElement.querySelector(
+		"[data-new-item-form]"
+	) as HTMLFormElement
+	const newItemInput = newItemForm.querySelector(
+		"[data-new-item-input]"
+	) as HTMLInputElement
+	newItemInput.placeholder = FORM_PLACEHOLDER
+	newItemForm.addEventListener("submit", e => {
+		e.preventDefault()
+
+		const itemText = newItemInput.value
+		if (itemText === "") return
+
+		const item = { id: uuid(), text: itemText } as Item
+		groups[groupName].push(item)
+
+		const itemElement = createItemElement(item)
+		const itemList = groupElement.querySelector("[data-group-id]") as HTMLDivElement
+		itemList.append(itemElement)
+		newItemInput.value = ""
+
+		saveGroups()
+	})
+
+	return groupElement
 }
-// <template data-group-template>
-//   <div class="group">
-//     <div class="group-header">
-//       <span data-name></span>
-//       <button class="icon-button" data-delete-group-button data-tooltip="Delete group">
-//         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-//           <use href="#trash-can-outline"></use>
-//         </svg>
-//       </button>
-//     </div>
-//     <div class="items" data-drop-zone data-group-id=""></div>
-//     <form data-item-form>
-//       <input type="text" class="item-input" placeholder="Item Name" data-item-input>
-//     </form>
-//   </div>
-// </template>
-
-addGlobalEventListener("submit", "[data-item-form]", e => {
-	e.preventDefault()
-
-	const itemForm = e.target as HTMLFormElement
-	const itemInput = itemForm.querySelector("[data-item-input]") as HTMLInputElement
-	const itemText = itemInput.value
-	if (itemText === "") return
-
-	const item = { id: uuid(), text: itemText } as Item
-	const groupElement = (itemForm.closest(".group") as HTMLDivElement).querySelector(
-		"[data-group-id]"
-	) as HTMLDivElement
-	groups[groupElement.dataset.groupId as string].push(item)
-
-	const itemElement = createItemElement(item)
-	groupElement.append(itemElement)
-	itemInput.value = ""
-
-	saveGroups()
-})
 
 function removeItem(itemId: string) {
 	const element = document.querySelector(`#${CSS.escape(itemId)}`) as HTMLDivElement
@@ -117,6 +153,8 @@ function removeItem(itemId: string) {
 	saveGroups()
 }
 
+// Challenge: Make the item text editable (use TS and CSS to swap a text element with an input)
+// TODO: Once the group name is done, make those changes to the item text here.
 const ITEM_TEMPLATE = document.querySelector(
 	"[data-item-template]"
 ) as HTMLTemplateElement
@@ -136,12 +174,12 @@ function createItemElement(item: Item) {
 
 function renderItems() {
 	Object.entries(groups).forEach(([groupId, items]) => {
-		const group = document.querySelector(
-			`[data-group-id="${groupId}"]`
-		) as HTMLDivElement
+		const groupElement = createGroupElement(groupId)
+		GROUPS_ELEMENT.append(groupElement)
+		const dropZone = groupElement.querySelector("[data-drop-zone]") as HTMLDivElement
 		items.forEach(item => {
 			const itemElement = createItemElement(item)
-			group.append(itemElement)
+			dropZone.append(itemElement)
 		})
 	})
 }
