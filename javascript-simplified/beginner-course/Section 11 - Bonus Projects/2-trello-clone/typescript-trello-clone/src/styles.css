@@ -66,10 +66,9 @@ header {
 	color: white;
 	outline: none;
 	box-shadow: 0.1rem 0.1rem rgba(0, 0, 0, 0.55);
-}
-
-.group-input::placeholder {
-	color: #aaa;
+	&::placeholder {
+		color: #aaa;
+	}
 }
 
 .groups {
@@ -100,11 +99,29 @@ header {
 	background-color: #333;
 	color: white;
 	padding: 0.25rem;
-	[data-name] {
+	[data-name],
+	.group-name-editor {
 		grid-column-start: 2;
 	}
 	[data-delete-group-button] {
 		justify-self: end;
+	}
+	.group-name-editor {
+		grid-row: 1;
+		display: flex;
+		.icon-button {
+			border-radius: 0 0.25rem 0.25rem 0;
+			margin-left: 0;
+		}
+		&[class~="hide"] {
+			:is(.group-input, .icon-button) {
+				display: none;
+			}
+			[data-name]:has(+ :not(&)),
+			:not(&) + [data-delete-group-button] {
+				display: none;
+			}
+		}
 	}
 }
 
@@ -176,4 +193,8 @@ header {
 [data-draggable].ghost {
 	background-color: black;
 	opacity: 0.25;
+}
+
+.hide {
+	display: none;
 }

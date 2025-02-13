@@ -12,87 +12,49 @@
 <body>
   <header>
     <div>Basic Trello Clone</div>
-    <div class="button-controls" data-button-controls>
+    <div class="button-controls">
       <span class="add-group">
-        <input type="text" class="group-input" placeholder="Group Name" data-group-input>
-        <button class="icon-button" data-add-group-button data-tooltip="Add group">
+        <input type="text" class="group-input" placeholder="Group Name" data-new-group-input>
+        <button class="icon-button" data-add-group-button data-tooltip="Add a group">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M20 14H14V20H10V14H4V10H10V4H14V10H20V14Z" />
+            <use href="#add"></use>
           </svg>
         </button>
       </span>
       <button class="icon-button" data-download-button data-tooltip="Download data">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <title>download</title>
-          <path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+          <use href="#download"></use>
         </svg>
       </button>
       <button class="icon-button" data-upload-button data-tooltip="Upload data">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z" />
+          <use href="#upload"></use>
         </svg>
       </button>
     </div>
   </header>
-  <!-- TODO: Pull in the new item form placeholder and use it when creating each group. -->
-  <div class="groups" data-item-form-placeholder="Task Name" data-tooltip-observe>
-    <div class="group">
-      <div class="group-header">
-        <span data-name>Backlog</span>
-        <button class="icon-button" data-delete-group-button data-tooltip="Delete group">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <use href="#trash-can-outline"></use>
-          </svg>
-        </button>
-      </div>
-      <div class="items" data-drop-zone data-group-id="backlog"></div>
-      <form data-item-form>
-        <input type="text" class="item-input" placeholder="Item Name" data-item-input>
-      </form>
-    </div>
-    <div class="group">
-      <div class="group-header">
-        <span data-name>Doing</span>
-        <button class="icon-button" data-delete-group-button data-tooltip="Delete group">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <use href="#trash-can-outline"></use>
-          </svg>
-        </button>
-      </div>
-      <div class="items" data-drop-zone data-group-id="doing"></div>
-      <form data-item-form>
-        <input type="text" class="item-input" placeholder="Item Name" data-item-input>
-      </form>
-    </div>
-    <div class="group">
-      <div class="group-header">
-        <span data-name>Done</span>
-        <button class="icon-button" data-delete-group-button data-tooltip="Delete group">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <use href="#trash-can-outline"></use>
-          </svg>
-        </button>
-      </div>
-      <div class="items" data-drop-zone data-group-id="done"></div>
-      <form data-item-form>
-        <input type="text" class="item-input" placeholder="Item Name" data-item-input>
-      </form>
-    </div>
-  </div>
-  <!-- TODO: Make group creation dynamic rather than having anything hard-coded. -->
+  <div class="groups" data-groups data-item-form-placeholder="Task Name" data-tooltip-observe></div>
   <template data-group-template>
     <div class="group">
       <div class="group-header">
         <span data-name></span>
+        <span class="group-name-editor hide" data-group-name-editor>
+          <input type="text" class="group-input" placeholder="Group Name" data-name-input />
+          <button class="icon-button" data-save-name-button data-tooltip="Save group name">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <use href="#content-save"></use>
+            </svg>
+          </button>
+        </span>
         <button class="icon-button" data-delete-group-button data-tooltip="Delete group">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <use href="#trash-can-outline"></use>
           </svg>
         </button>
       </div>
-      <div class="items" data-drop-zone data-tooltip-observe></div>
-      <form data-item-form>
-        <input type="text" class="item-input" placeholder="Item Name" data-item-input>
+      <div class="items" data-items data-drop-zone data-tooltip-observe></div>
+      <form data-new-item-form>
+        <input type="text" class="item-input" data-new-item-input>
       </form>
     </div>
   </template>
@@ -107,15 +69,13 @@
     </div>
   </template>
   <svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+    <path id="add" d="M20 14H14V20H10V14H4V10H10V4H14V10H20V14Z" />
+    <path id="download" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+    <path id="upload" d="M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z" />
+    <path id="content-save"
+      d="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z" />
     <path id="trash-can-outline"
       d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
-    <path id="delete-outline"
-      d="M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19M8,9H16V19H8V9M15.5,4L14.5,3H9.5L8.5,4H5V6H19V4H15.5Z" />
-    <path id="delete-icon" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
-    <path id="trash-can"
-      d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" />
-    <path id="delete-forever"
-      d="M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19M8.46,11.88L9.87,10.47L12,12.59L14.12,10.47L15.53,11.88L13.41,14L15.53,16.12L14.12,17.53L12,15.41L9.88,17.53L8.47,16.12L10.59,14L8.46,11.88M15.5,4L14.5,3H9.5L8.5,4H5V6H19V4H15.5Z" />
     <path id="close"
       d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
   </svg>
